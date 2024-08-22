@@ -14,7 +14,7 @@ Before we begin, let's first understand what is LoRA and how LoRA works.
 
 [LoRA](https://arxiv.org/abs/2106.09685) stands for Low Rank Adaptation, which is a techinque to finetune model on specific datasets with minimal parameter update. Previously, finetuning models on other datasets is painful because it's the same as regular training just on different datasets. Also, it suffers from catastrophic forgetting, meaning that after finetuning, the model will forget knowledge about previous datasets. This is because the gradient of later datasets will deviate from previous datasets, resulting the loss on previous dataset to digress from optimal point. 
 
-<img src = "./assets/img/blog/WechatIMG3500.png">Gradient of task 2 is moving away optimal point from Task 1, meaing the loss for Task 1 becomes greater, an example of catastrophic forgetting</img>
+<img src = "./img/35011724305066_.pic.jpg">Gradient of task 2 is moving away optimal point from Task 1, meaing the loss for Task 1 becomes greater, an example of catastrophic forgetting</img>
 
 Of course, there are methods to reduce the computations, such as choosing only specific parameters to update or introducing external modules to handle updated parameters. However, LoRA takes a simple yet effective approach. They assume that the 'change in weights during model adaptation also has a low “intrinsic rank”', meaning that the updated parameter can be expressed as the multiplication of 2 low rank matrix.
 
@@ -37,7 +37,7 @@ In a sense, we are updating model just like gradient, with the assumption that t
 In this paper, they use LoRA as gradient to update model parameter. First, they train the model just like LoRA without updating model's parameters. After 2000 steps, the matrix A and B will multiply and add to the model's weight. Then both matrix will be reinitialize and get trained again. 
 
 There are several advantage of this method. Firstly, this is much more parameter-efficient than fully-trained and LoRA. Both of them require gradient descent on fully ranked matrix. Secondly, according to the paper, ReLoRA outperforms LoRA though still can't compare with fully trained model. Thus, the idea of using low-rank update for high rank matrix does work.
-<img src = "./assets/img/blog/WechatIMG3501.png"></img>
+<img src = "./img/35001724304205_.pic.jpg"></img>
 
 Personally, I find LoRA and its variants, especially with the latter paper, interesting and potential. I want to create a model that can continuously run and update itself, so the strategy that requires less energy and computation resources can really help me realize my goal.
 
