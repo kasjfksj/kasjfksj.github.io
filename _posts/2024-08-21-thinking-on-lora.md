@@ -29,7 +29,7 @@ Right now, variations of LoRA focuses on making it more efficienty, such as spee
 When we look at the equation closely, we can move $$W_0$$ to the left and obtain:
 
 $$
-\Delta W = AB where \Delta W = W - W_0
+\Delta W = AB \hspace{1em} where \hspace{1em}\Delta W = W - W_0
 $$
 
 In a sense, we are updating model just like gradient, with the assumption that the gradient is low intrinsic rank. For a regular training session, we are updating parameter by different batches of data. For LoRA, we are updating parameters by different datasets. There are some connections between fully weighted parameter update and LoRA, and this idea is explored by this [paper](https://arxiv.org/pdf/2307.05695). 
