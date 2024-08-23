@@ -10,8 +10,12 @@ tabs: true
 
 ### Background
 
-Compared with other sequential model like LSTM and RNN, Transformers are much more successful and serve as the foundation of current language models. These transformer-based LLM achieve higher accuracy than other architecture and can scale up easily, . However, Transformers in that it lacks of positional information.
+Compared with other sequential model like LSTM and RNN, Transformers are much more successful and serve as the foundation of current language models. These transformer-based LLM achieve higher accuracy than other architecture and can scale up easily due to the parallel computing of Transformer. However, Transformers have its flaws. It requires more computation resources than Sequential model with time complexity of $$O (N^2)$$. 
 
-### Positional Information
+Positional information is about the order of characters appear. For instance, "I eat fish" is different from "fish eat I" because order of appearance is different. "I" appear first in the first setence and "fish" appear first in the second sentence, resulting each sentence having different meaning. 
 
-What's positional information? 
+In a sequential model, 
+
+### Positional Encoding
+
+
