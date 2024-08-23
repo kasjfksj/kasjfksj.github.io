@@ -4,7 +4,7 @@ title: LoRA - a potential parameter efficient fine-tuning method for large model
 date: 2024-08-21 16:15:09
 description: 
 tags: formatting images
-categories: model architecture
+categories: fine-tune
 tabs: true
 ---
 ### Background
@@ -15,9 +15,9 @@ But what if there are hundreds of datasets you want to test and not only that, y
 
 ### Gradient Descent
 
-Every AI model, LLM or CNN, is basically a mathematical function that's based on some parameters $$ \theta $$. Parameters are usually weight matrix that multiply with input matrix. For most datasets, we have inputs $$X$$ and targets $$Y$$. For instance, the input can be a sentence and the output is 0 and 1 where 0 represents negative sentiment and 1 represents positive sentiment. We give the model input $$x \  \ and x \in X$$, and it outputs $$ \textit{f}(x, \theta)$$. However, we wish that the output will be the target $$y \  \ and y \in Y$$. We use gradient descent to minimize the distance between outcomes and desired outcomes. 
+Every AI model, LLM or CNN, is basically a mathematical function that's based on some parameters $$ \theta $$. Parameters are usually weight matrix that multiply with input matrix. For most datasets, we have inputs $$X$$ and targets $$Y$$. For instance, the input can be a sentence and the output is 0 and 1 where 0 represents negative sentiment and 1 represents positive sentiment. We give the model input $$x \  \ and \  \ x \in X$$, and it outputs $$ \textit{f}(x, \theta)$$. However, we wish that the output will be the target $$y \  \ and \  \ y \in Y$$. We use gradient descent to minimize the distance between outcomes and desired outcomes. 
 
-$$ W_t = W_{t-1} + \Delta W \  \ where\ \ W\ \ is \ \ parameter \ \ and \ \ t \ \ is \ \ each \ \ iteration
+$$ W_t = W_{t-1} + \Delta W \  \ where\ \ W\ \ is \ \ parameter \ \ and \ \ t \ \ is \ \ each \ \ iteration $$
 
 For the training session, most computation lies in computing gradient, notably matrix multiplication, which will take incredibly long time when the model size scales up. We can handle this amount of computation on a few datasets, but it'll be too much when there are many datasets to fine tune on.
 
@@ -32,7 +32,7 @@ $$
 W = W_0 + AB \  \ where \ \ A\in R^{m\times r} \ \ and \ \ B\in R^{r\times n}. \  \ Here \ \ r\ll m \ \ and \ \ n
 $$
 
-This way, the computation for gradient will be greatly reduced. For instance, suppose the weight matrix $$W$$ is 768 by 1024 matrix. When we calculate the gradient for this matrix, we need to compute 768 $$\times$$ 1024 parameters. For A and B matrix, we can let A be a 768 by 32 matrix and B be a 32 by 1024 matrix. When the model is doing gradient descent, we froze the model's parameter, so the gradient for the $$W$$ is 0. We only need to calculate gradient for A and B, which has much less parameters than $$W$$. Thus, the computation cost reduces significantly.
+This way, the computation for gradient will be greatly reduced. For instance, suppose the weight matrix $$W$$ is 768 by 1024 matrix. When we calculate the gradient for this matrix, we need to compute 768 $$\times$$ 1024 parameters. For $$A$$ and $$B$$ matrix, we can let A be a 768 by 32 matrix and B be a 32 by 1024 matrix. When the model is doing gradient descent, we froze the model's parameter, so the gradient for the $$W$$ is 0. We only need to calculate gradient for $$A$$ and $$B$$, which has much less parameters than $$W$$. Thus, the computation cost reduces significantly.
 
 ### ReLoRA
 
