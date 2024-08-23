@@ -10,4 +10,8 @@ tabs: true
 
 ### Background
 
-Positional encoding exists because transformer's lack of positional information. 
+Compared with other sequential model like LSTM and RNN, Transformers are much more successful and serve as the foundation of current language models. These transformer-based LLM achieve higher accuracy than other architecture and can scale up easily, . However, Transformers in that it lacks of positional information.
+
+### Positional Information
+
+What's positional information? 

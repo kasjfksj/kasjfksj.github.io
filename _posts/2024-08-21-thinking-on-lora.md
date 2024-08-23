@@ -49,7 +49,7 @@ In a way, we can treat the $$AB$$ as the gradient of the model, and yes, we can 
 In their paper, they use LoRA as gradient to update model parameter. First, they train the model just like LoRA without updating model's parameters. After 2000 steps, the matrix A and B will multiply and add to the model's weight. Then both matrix will be reinitialize and get trained again. 
 
 There are several advantage of this method. Firstly, this is much more parameter-efficient than fully-trained model. Secondly, according to the paper, ReLoRA outperforms LoRA though still can't compare with fully trained model. Thus, the idea of using low-rank update for high rank matrix does work.
-<img src = "./img/35001724304205_.pic.jpg"></img>
+<img src = "./img/35001724304205_.pic.jpg">
 
 ### Conclusion
 
