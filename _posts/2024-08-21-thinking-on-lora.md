@@ -6,18 +6,13 @@ description:
 tags: formatting images
 categories: fine-tune
 tabs: true
+toc: true
 ---
 
-<d-contents>
-  <nav class="l-text figcaption">
-  <h3>Contents</h3>
-    <div><a href="#Background">Background</a></div>
-    <div><a href="#Gradient Descent">Gradient Descent</a></div>
-    <div><a href="#LoRA">LoRA</a></div>
-    <div><a href="#ReLoRA">ReLoRA</a></div>
-    <div><a href="#Conclusion">Conclusion</a></div>
-  </nav>
-</d-contents>
+<ul id="toc" class="section-nav">
+  <li class="toc-entry toc-h1"><a href="#Background">Background</a></li>
+  <li class="toc-entry toc-h1"><a href="#Gradient Descent">Gradient Descent</a></li>
+</ul>
 
 # Background
 
