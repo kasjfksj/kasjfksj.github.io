@@ -60,7 +60,11 @@ In their paper, they use LoRA as gradient to update model parameter. First, they
 
 There are several advantage of this method. Firstly, this is much more parameter-efficient than fully-trained model. Secondly, according to the paper, ReLoRA outperforms LoRA though still can't compare with fully trained model. Thus, the idea of using low-rank update for high rank matrix does work.
 
-{% include figure.liquid loading="eager" path="_posts/img/35001724304205_.pic.jpg" class="img-fluid rounded z-depth-1" %}
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/35001724304205_.pic.jpg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
 
 # Conclusion
 
