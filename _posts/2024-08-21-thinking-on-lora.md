@@ -10,8 +10,11 @@ toc: true
 ---
 
 <ul id="toc" class="section-nav">
-  <li class="toc-entry toc-h1"><a href="#Background">Background</a></li>
-  <li class="toc-entry toc-h1"><a href="#Gradient Descent">Gradient Descent</a></li>
+  <li class="toc-entry toc-h1"><a href="#background">Background</a></li>
+  <li class="toc-entry toc-h1"><a href="#gradient-Descent">Gradient Descent</a></li>
+  <li class="toc-entry toc-h1"><a href="#loRA">LoRA</a></li>
+  <li class="toc-entry toc-h1"><a href="#reLoRA">ReLoRA</a></li>
+  <li class="toc-entry toc-h1"><a href="#conclusion">Conclusion</a></li>
 </ul>
 
 # Background
