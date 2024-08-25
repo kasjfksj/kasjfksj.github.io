@@ -39,7 +39,7 @@ Absolute positioinal encoding is first introduced in the paper Attention Is All 
 For a word $$p$$, the positional encoding will be expressed as:
 
 $$
-p_t = \begin{bmatrix} sin(w_0 \cdot t) \\ cos(w_0 \cdot t) \\ sin(w_1 \cdot t) \\ cos(w_1 \cdot t) \\ \vdots \\ sin(w_{d/2} \cdot t) \\ cos(w_{d/2} \cdot t) \end{bmatrix} \  \ w_k = \frac{1}{10000^{\frac{2k}{d}}} \   \ where d is the dimension of the positional embedding
+p_t = \begin{bmatrix} sin(w_0 \cdot t) \\ cos(w_0 \cdot t) \\ sin(w_1 \cdot t) \\ cos(w_1 \cdot t) \\ \vdots \\ sin(w_{d/2} \cdot t) \\ cos(w_{d/2} \cdot t) \end{bmatrix} \  \ w_k = \frac{1}{10000^{\frac{2k}{d}}} \   \ where \ \ d \ \ is \ \ the \ \ dimension \ \ of \ \ the \ \ positional \ \ embedding
 $$
 
 Using trigonometry function has a very good property. Given word $$p_i$$ at position i and word $$p_{i+k}$$ at position i+k, we can deduce the position between them by taking dot product.
@@ -47,6 +47,7 @@ Using trigonometry function has a very good property. Given word $$p_i$$ at posi
 $$\begin{split} p_i \cdot p_{i+k} & = \[\sum{i=0}^{\frac{d}{2}-1}sin(w_it) \dot sin(w_i(t+k))+cos(w_it) \dot cos(w_i(t+k))] \\
 & = \[\sum{i=0}^{\frac{d}{2}-1} cos(w_i(t-(t+k)))] \\
 & = \[\sum{i=0}^{\frac{d}{2}-1} cos(w_ik)]
+\end{split}
 $$
 
 We can see that the final result is only dependent on k, the relative distance between each word. However, it can only work when two positional embedding directly dot product with each other. In Transformer, there are always weight matrices K and V between the vectors, resulting the loss of relative position information.
@@ -60,11 +61,12 @@ $$\langle f_q(x_m,m),f_k(x_n,n)\rangle=g(x_m,x_n,m-n)$$
 Suppose the positional encoding dimension is 2. In Rotary Positional encoding, researchers found out a set of functions that satisfied above equation.
 
 $$f_q(x_m,m) = (W_qx_m)e^{im\theta}$$
+
 $$f_k(x_n,n) = (W_kx_n)e^{in\theta}$$
+
 $$g(x_m,x_n,m-n)=Re[(W_qx_m)(W_kx_n)e^{i(m-n) \theta}]$$
 
 In linear algebra, a complect number can be expressed as the following:
-
 
 For $$e^{im\theta}$$, w
 
