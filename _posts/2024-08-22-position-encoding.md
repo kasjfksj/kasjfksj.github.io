@@ -44,9 +44,9 @@ $$
 
 Using trigonometry function has a very good property. Given word $$p_i$$ at position i and word $$p_{i+k}$$ at position i+k, we can deduce the position between them by taking dot product.
 
-$$\begin{split} p_i \cdot p_{i+k} & = \sum_{i=0}^{\frac{d}{2}-1}sin(w_it) \dot sin(w_i(t+k))+cos(w_it) \dot cos(w_i(t+k)) \\
-& = \\sum_{i=0}^{\frac{d}{2}-1} cos(w_i(t-(t+k))) \\
-& = \\sum_{i=0}^{\frac{d}{2}-1} cos(w_ik)
+$$\begin{split} p_i \cdot p_{i+k} & = \sum_{i=0}^{\frac{d}{2}-1}sin(w_it)sin(w_i(t+k))+cos(w_it)cos(w_i(t+k)) \\
+& = \sum_{i=0}^{\frac{d}{2}-1} cos(w_i(t-(t+k))) \\
+& = \sum_{i=0}^{\frac{d}{2}-1} cos(w_ik)
 \end{split}
 $$
 
