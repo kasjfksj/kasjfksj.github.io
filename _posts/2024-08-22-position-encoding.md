@@ -50,15 +50,40 @@ $$\begin{split} p_i \cdot p_{i+k} & = \[\sum{i=0}^{\frac{d}{2}-1}sin(w_it) \dot 
 \end{split}
 $$
 
-We can see that the final result is only dependent on k, the relative distance between each word. However, it can only work when two positional embedding directly dot product with each other. In Transformer, there are always weight matrices K and V between the vectors, resulting the loss of relative position information.
+We can see that the final result is only dependent on k, the relative distance between each word. 
+
+Let's recall how Transformer works, with KQV stuffs.
+
+$$softmax(\textbf{QK^T})\textbf{V}$$
+$$\textbf{Q} = \textbf{W_Q}x$$
+$$\textbf{K} = \textbf{W_K}x$$
+$$\textbf{V} = \textbf{W_V}x$$
+
+We may only focus on $$\textbf{QK^T}$$ because that's where two words interact each other. 
+We now inject sinusoidal positional encoding to input vector, so instead of $$x$$, it's $$x+e$$. We then calculate attention score for words in position i and j, the result will be:
+
+$$\textbf{W_Q}(x_i+e_i)(\textbf{W_K}(x_j+e_j))^T = $$
+$$\textbf{W_Q}x_i{x_j}^T\textbf{W_K}+\textbf{W_Q}e_i{x_j}^T\textbf{W_K}+\textbf{W_Q}x_i{e_j}^T\textbf{W_K}+\textbf{W_Q}e_i{e_j}^T\textbf{W_K}$$
+
+We can see that the first term doesn't contain any positional information of two words. The second and third term only contain positional information of 1 word, which alone can't deduce the relative positional information. Only the fourth one that has the dot product of two positional embedding contain relative position of two words, which is good for the model.
+
+However, although it can learn about relative positions between words, it will fail to the order of appearance. If we can look closely at the dot product of two positional embedding:
+
+$$p_i \cdot p_{i+k} =\[\sum{i=0}^{\frac{d}{2}-1} cos(w_ik)]$$
+
+The final result is a summation cosine. We recall that cosine is an even function, meaning that:
+
+$$\[\sum{i=0}^{\frac{d}{2}-1} cos(w_ik)] = \[\sum{i=0}^{\frac{d}{2}-1} cos(-w_ik)]$$
+
+In the sentences "I eat fish" and "fish eat I", "fish" and "I" have the same distance of two. Thus, when calculating attention score between these words, the score will be the same in these sentences. This equivalence is not we want. We want the encoding method can not only distinquish distance between words but also which word comes out first.
 
 ### Relative Positional Encoding - Rotary Positional encoding
 
-If we want positional embeddings maintaining relative position information in Transformers, we are essentially try to find functions $$f_q$$, $$f_k$$, $$g$$ such that:
+In order for the encoding method to contain relative position information as well as the order of each word, we can model it using the following equations:
 
-$$\langle f_q(x_m,m),f_k(x_n,n)\rangle=g(x_m,x_n,m-n)$$
+$$\langle f_q(x_m,m),f_k(x_n,n)\rangle=g(x_m,x_n,m-n) \  \ where \ \ f \ \ is \ \ encoding \ \ method$$
 
-Suppose the positional encoding dimension is 2. In Rotary Positional encoding, researchers found out a set of functions that satisfied above equation.
+Of course, g should not be an even function like sinusoidal encoding. In 
 
 $$f_q(x_m,m) = (W_qx_m)e^{im\theta}$$
 
