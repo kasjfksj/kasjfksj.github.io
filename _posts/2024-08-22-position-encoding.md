@@ -36,17 +36,17 @@ Of course, we can just simply assign 1, 2, 3, etc to each word position, but res
 
 Absolute positioinal encoding is first introduced in the paper Attention Is All You Need. It uses trigonometry function, sine and cosine, to encode positions. 
 
-For a word $$p$$, the positional encoding will be expressed as:
+For a word $$x$$ at position t, the positional encoding will be expressed as:
 
 $$
-p_t = \begin{bmatrix} sin(w_0 \cdot t) \\ cos(w_0 \cdot t) \\ sin(w_1 \cdot t) \\ cos(w_1 \cdot t) \\ \vdots \\ sin(w_{d/2} \cdot t) \\ cos(w_{d/2} \cdot t) \end{bmatrix} \  \ w_k = \frac{1}{10000^{\frac{2k}{d}}} \   \ where \ \ d \ \ is \ \ the \ \ dimension \ \ of \ \ the \ \ positional \ \ embedding
+e_t = \begin{bmatrix} sin(w_0 \cdot t) \\ cos(w_0 \cdot t) \\ sin(w_1 \cdot t) \\ cos(w_1 \cdot t) \\ \vdots \\ sin(w_{d/2} \cdot t) \\ cos(w_{d/2} \cdot t) \end{bmatrix} \  \ w_k = \frac{1}{10000^{\frac{2k}{d}}} \   \ where \ \ d \ \ is \ \ the \ \ dimension \ \ of \ \ the \ \ positional \ \ embedding
 $$
 
-Using trigonometry function has a very good property. Given word $$p_i$$ at position i and word $$p_{i+k}$$ at position i+k, we can deduce the position between them by taking dot product.
+Using trigonometry function has a very good property. Given word $$p_i$$ at position i and word $$e_{i+k}$$ at position i+k, we can deduce the position between them by taking dot product.
 
-$$\begin{split} p_i \cdot p_{i+k} & = \sum_{i=0}^{\frac{d}{2}-1}sin(w_it)sin(w_i(t+k))+cos(w_it)cos(w_i(t+k)) \\
+$$\begin{split} e_t \cdot e_{t+k} & = \sum_{i=0}^{\frac{d}{2}-1}sin(w_it)sin(w_i(t+k))+cos(w_it)cos(w_i(t+k)) \\
 & = \sum_{i=0}^{\frac{d}{2}-1} cos(w_i(t-(t+k))) \\
-& = \sum_{i=0}^{\frac{d}{2}-1} cos(w_ik)
+& = \sum_{i=0}^{\frac{d}{2}-1} cos(-w_ik)
 \end{split}
 $$
 
