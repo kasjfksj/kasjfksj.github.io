@@ -3,12 +3,13 @@ layout: post
 title: History of Position Encoding
 date: 2024-08-21 16:15:09
 description: 
-tags: formatting images
 categories: encoding method
 tabs: true
+toc: 
+  sidebar: left
 ---
 
-### Background-Positional information
+## Background-Positional information
 
 Compared with other sequential model like LSTM and RNN, Transformers are much more successful and serve as the foundation of current language models. These transformer-based LLM achieve higher accuracy than other architecture and can scale up easily due to the parallel computing of Transformer. However, Transformers have its flaws. It requires more computation resources than Sequential model with time complexity of $$O (N^2)$$. Also, without external help, Transformers can't acquire positional information that is important when dealing with sequential data.
 
@@ -32,7 +33,7 @@ However, for transformers, all words are passed in all at once. The sequential m
 
 Of course, we can just simply assign 1, 2, 3, etc to each word position, but researchers found out better ways to encode position of words.
 
-### Absolute Positional Encoding - Sinusoidal Positional encoding
+## Absolute Positional Encoding - Sinusoidal Positional encoding
 
 Absolute positioinal encoding is first introduced in the paper Attention Is All You Need. It uses trigonometry function, sine and cosine, to encode positions. 
 
@@ -80,7 +81,7 @@ $$\sum{i=0}^{\frac{d}{2}-1} cos(w_ik) = \sum{i=0}^{\frac{d}{2}-1} cos(-w_ik)$$
 
 In the sentences "I eat fish" and "fish eat I", "fish" and "I" have the same distance of two. Thus, when calculating attention score between these words, the score will be the same in these sentences. This equivalence is not we want. We want the encoding method can not only distinquish distance between words but also which word comes out first.
 
-### Relative Positional Encoding - Rotary Positional encoding
+## Relative Positional Encoding - Rotary Positional encoding
 
 In order for the encoding method to contain relative position information as well as the order of each word, we can model it using the following equations:
 

@@ -3,7 +3,6 @@ layout: post
 title: LoRA - a potential parameter efficient fine-tuning method for large models
 date: 2024-08-21 16:15:09
 description: 
-tags: formatting images
 categories: fine-tune
 giscus_comments: true
 tabs: true
