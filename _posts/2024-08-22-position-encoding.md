@@ -4,7 +4,9 @@ title: History of Position Encoding
 date: 2024-08-21 16:15:09
 description: 
 categories: encoding method
+giscus_comments: true
 tabs: true
+related_posts: false
 toc: 
   sidebar: left
 ---
@@ -53,9 +55,9 @@ $$
 
 We can see that the final result is only dependent on k, the relative distance between each word. 
 
-Let's recall how Transformer works, with KQV stuffs.
+Let's recall how attention, the main mechanism of Transformer, works with KQV stuffs.
 
-$$softmax(\textbf{QK}^T)\textbf{V}$$
+$$Attention(Q,K,V) = softmax(\textbf{QK}^T)\textbf{V}$$
 
 $$\textbf{Q} = \textbf{W}_Qx$$
 
@@ -69,39 +71,16 @@ We now inject sinusoidal positional encoding to input vector, so instead of $$x$
 $$\textbf{W}_Q(x_i+e_i)(\textbf{W}_K(x_j+e_j))^T = $$
 $$\textbf{W}_Qx_i{x_j}^T\textbf{W}_K+\textbf{W}_Qe_i{x_j}^T\textbf{W}_K+\textbf{W}_Qx_i{e_j}^T\textbf{W}_K+\textbf{W}_Qe_i{e_j}^T\textbf{W}_K$$
 
-We can see that the first term doesn't contain any positional information of two words. The second and third term only contain positional information of 1 word, which alone can't deduce the relative positional information. Only the fourth one that has the dot product of two positional embedding contain relative position of two words, which is good for the model.
+We can see that the first term doesn't contain any positional information of two words. The second and third term only contain positional information of 1 word, which alone can't deduce the relative positional information. Only the fourth one that has the dot product of two positional embedding contain relative position of two words. This piece of information will be helpful to the model to identify the revelance between each words.
 
-However, although it can learn about relative positions between words, it will fail to the order of appearance. If we can look closely at the dot product of two positional embedding:
+Questions:
+1. Why do we add positional embedding to input embedding? What about concatenation?
+   a.  It may blur semantic meaning of input embedding by interwining positional embedding with semantic content
+   b.  It'll increase dimension of input vector with no significant increase of model's accuracy
+2. Why many people call sinusoidal positional encoding as absolute? They say it can't learn relative positional information.
+   a.  I searched online looking for answers why this encoding method is absolute and can't acquire distance between words. Sadly, all the blog I have checked so far didn't contain detailed mathematical formula to prove it. I guess they call it absolute simply because it only takes the input of current word position and no other word positions. 
 
-$$p_i \cdot p_{i+k} =\sum{i=0}^{\frac{d}{2}-1} cos(w_ik)$$
+## Conclusion
 
-The final result is a summation cosine. We recall that cosine is an even function, meaning that:
-
-$$\sum{i=0}^{\frac{d}{2}-1} cos(w_ik) = \sum{i=0}^{\frac{d}{2}-1} cos(-w_ik)$$
-
-In the sentences "I eat fish" and "fish eat I", "fish" and "I" have the same distance of two. Thus, when calculating attention score between these words, the score will be the same in these sentences. This equivalence is not we want. We want the encoding method can not only distinquish distance between words but also which word comes out first.
-
-## Relative Positional Encoding - Rotary Positional encoding
-
-In order for the encoding method to contain relative position information as well as the order of each word, we can model it using the following equations:
-
-$$\langle f_q(x_m,m),f_k(x_n,n)\rangle=g(x_m,x_n,m-n) \  \ where \ \ f \ \ is \ \ encoding \ \ method$$
-
-Of course, g should not be an even function like sinusoidal encoding. In 
-
-$$f_q(x_m,m) = (W_qx_m)e^{im\theta}$$
-
-$$f_k(x_n,n) = (W_kx_n)e^{in\theta}$$
-
-$$g(x_m,x_n,m-n)=Re[(W_qx_m)(W_kx_n)e^{i(m-n) \theta}]$$
-
-In linear algebra, a complex number can be expressed as the following:
-
-For $$e^{im\theta}$$, w
-
-
-
-Why do we add positional embedding to input embedding? What about concatenation?
-1. we may blur semantic meaning of input embedding by interwining positional embedding with semantic content
-2. It'll increase dimension of input vector, . Also, there's no report that indicates the advantage of using concatenation
+Positional encoding is one of the most important feature in Transformer. This blog covers one of the encoding method, the Absolute Positional encoding. Many people say about this absolute positional encoding can't acquire relative distance two words because it's "absolute." However, I do some mathematical deduction and show that this encoding method can learn the relative distance between two words. Therefore, it's useful in acquiring information beside the current position of the word. 
 
