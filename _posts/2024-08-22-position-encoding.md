@@ -1,7 +1,7 @@
 ---
 layout: post
 title: History of Position Encoding
-date: 2024-08-21 16:15:09
+date: 2024-08-22 16:15:09
 description: 
 categories: encoding method
 giscus_comments: true
