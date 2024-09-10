@@ -46,4 +46,4 @@ The final exam started at 7 p.m. It turned out to be relatively easy, focusing m
 
 After finishing final exam, stepping out of the classroom into the crisp evening air at 10 p.m., I felt a deep sense of achievement from completing the challenging course. Yet, a few days before I left, a wave of sadness hit me. I had to say goodbye to everything I had enjoyed: the campus, the course, the TAs, the Italian restaurants, the gelato store, Safeway, and the buses. It had been a tough but incredible experience, unlike anything I had encountered at UCI. I made new friends, traveled to another city, and lived there for two months. More importantly, I gained confidence in tackling difficult challenges, knowing that my positivity could help me overcome any obstacles.
 
-After I arrived in Irvine for a few days, I received a letter saying I got an A+ on this course. I smiled and knew I achieved my goal. Besides the academic achievement, I also made some friends
+After I arrived in Irvine for a few days, I received a letter saying I got an A+ on this course. I smiled and knew I achieved my goal. 
