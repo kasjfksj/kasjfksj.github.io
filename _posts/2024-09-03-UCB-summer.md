@@ -6,6 +6,9 @@ description:
 tags: experience
 categories: classes
 tabs: true
+related_posts: false
+toc: 
+  sidebar: left
 ---
 
 This summer, I took UC Berkeley’s CS 61A course which was hard as the rumor said, but my journey included more than just academic challenges. It began with a housing issue. I had arranged to stay in a UCB student house, but just before my arrival, the landlord cut my stay short to July 31 instead of August 15, which meant I had to move out before even finishing my course. Moreover, I was worried it might be a scam, so I quickly canceled and had to scramble for new accommodation.
