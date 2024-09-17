@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Thinking on current LLM trend
+title: First year conclusion
 date: 2024-09-16 16:15:09
 description: 
 tags: experience
