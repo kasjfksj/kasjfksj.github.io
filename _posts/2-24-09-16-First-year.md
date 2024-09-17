@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Thinking on current LLM trend
-date: 2024-08-09 16:15:09
+date: 2024-09-16 16:15:09
 description: 
 tags: experience
 categories: classes
@@ -18,4 +18,5 @@ One of my regrets is not successfully changing my major to Computer Science. I f
 
 Second regret is that I didn’t make many friends. Initially, I joined clubs like AI and ACM with the hope of meeting new people. I attended events such as the beach party organized by the AI club, but I found it difficult to engage in conversations due to a lack of relevant experiences to share. This led to a situation where I felt disconnected from others who talked about their friends and experiences in other clubs. As a result, I stopped attending these events because I felt alienated. Reflecting on the club event I attended before, like the beach party, I realize that instead of avoiding club activities, I should have attended more events and taken note of any experiences or topics that I could discuss later. Building relationships often depends on having a wealth of experiences to share, and my difficulty in forming connections was partly due to my limited engagement. In hindsight, participating more actively would have provided me with more stories and content to share, ultimately leading to better relationships.
 
-Third regret 
+
+Of course, I did have some achievement last year. Last year, I participated in an AI Innovation Challenge, which gave me the chance to collaborate with other students passionate about AI. Our project involved developing an AI chatbot, and I was particularly excited about our first meeting where we brainstormed various features and discussed technologies like LLMs and databases. Despite our enthusiasm, we struggled with a lack of clear goals, which led us to continuously add new features every week. A week before the deadline, we still hadn't completed a single feature. It was at this moment that I stood up and held a meeting. I told teammates that we should have a determined goal and we should focus on developing a feature this week.  This shift in approach allowed us to complete the project, but we only received a participation award as our single feature was not enough to advance in the competition. From this experience I gained friendship with a student in senior, and later he would introduce other seniors who have passions on AI as well. This notion of having a determined goal was not so obvious to me as I continuously did things without knowing my goal. This oblivition of goal would inhibit me from achieving in other fields as I will discuss later.
