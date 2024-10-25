@@ -111,3 +111,5 @@ While val acc and train acc climbed up together at around 10^4, val acc suddenly
 For ema optimizer, the val acc sharply increase at $$10^4$$ steps and then increases at a very slow pace. 
 
 
+
+
