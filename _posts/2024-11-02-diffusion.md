@@ -17,11 +17,47 @@ In recent years, diffusion models have emerged as one of the most powerful techn
 
 In this blog, we'll dive deep into the fundamentals of diffusion models, explain how they work, and explore their applications in generative tasks. By the end, you'll have a clear understanding of this cutting-edge model and how it is revolutionizing the world of generative AI.
 
+## Limitations of other models
+
+Before diffusion model was proposed, there were already several generative models, but all of them had some limitations
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/diffusion_model/40841731207612_.pic.jpg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Comparison of architectures of different models.
+</div>
+
+1. Variational Autoencoders (VAEs)
+Variational Autoencoders (VAEs) are a class of generative models that rely on the variational inference framework. The model learns an encoder-decoder structure, where encoder maps the input data to a probabilistic latent space (usually Gaussian). Decoder maps the latent space back to the data space to generate new samples.
+
+VAEs optimize a lower bound on the log-likelihood of the data using the ELBO (Evidence Lower Bound), which includes a reconstruction term and a regularization term that enforces the learned latent distribution to be close to a prior distribution (usually Gaussian).
+
+There are 2 limitations of VAE. Firstly, its generated samples may lack sharpness and realism. Secondly, the regularization in VAEs can sometimes result in blurry outputs due to the continuous latent space.
+
+2. Generative Adversarial Networks (GANs)
+Generative Adversarial Networks (GANs) consist of two neural networks — a generator and a discriminator — that compete against each other in a minimax game. The generator creates synthetic data, and the discriminator tries to distinguish between real and fake data. The goal is for the generator to create data that is indistinguishable from real data, according to the discriminator.
+
+There are 2 limitations of GAN. Firstly, GANs has instability during training session due to optimization of minmax game. Secondly ,they are prone to mode collapse, where the model fails to capture the full diversity of the data distribution.
+
+3. Normalizing Flows (NF)
+Normalizing Flows (NF) are another class of generative models that provide a way to transform simple distributions (e.g., Gaussian) into complex ones via a series of invertible transformations. The key idea is that the model learns a sequence of invertible functions that map a simple distribution to the target data distribution. 
+
+Normalizing Flows resemble to diffusion models where both of them try to trace from simple distributions into complex data distribution via transformations. However, there are 2 limitations in NF. Firstly, it's computationally expensive due to the need for invertible transformations, which can make them less scalable for high-dimensional data. Secondly, it's not flexible when the transformations need to be invertible. 
+
 ## What is diffusion model
 
 Diffusion models are a class of generative models that gradually add noise to data, transform it into pure noise, and then learn to recover the data through the reverse diffusion process. This is akin to simulating the way particles diffuse through a medium, but instead of particles, the model learns to diffuse data (like images, audio, etc.).
 
 ## Key insighsts behind diffusion model
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/diffusion_model/40831731207587_.pic.jpg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
 
 •	Forward Process (Noise Addition): This is where the model gradually adds noise to the data, step by step, until the original data is completely turned into noise. This process is typically modeled using a Markov chain.
 
@@ -61,11 +97,21 @@ Diffusion models are also being used to generate audio and speech. By treating s
 Generating video frames is a more complex task, but diffusion models are also making strides in this area. Video generation with diffusion models typically involves generating high-quality sequences of frames that are consistent and coherent over time.
 
 ## Why Are Diffusion Models So Effective?
+
 There are several reasons why diffusion models have become so popular in generative AI:
 1.	Stability: Unlike GANs, which can suffer from training instability (e.g., mode collapse), diffusion models tend to be more stable during training, as they optimize a simpler objective—predicting noise at each step rather than directly generating data.
 2.	High-Quality Output: Diffusion models have been shown to produce exceptionally high-quality and diverse outputs. The gradual denoising process allows the model to generate highly detailed and coherent data.
 3.	Flexibility: Diffusion models can be applied to a wide range of generative tasks, from images to audio to text, making them a versatile tool in the AI toolbox.
 4.	Scalability: Diffusion models are scalable and can be trained on large datasets, enabling them to learn complex data distributions and generate high-dimensional outputs.
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/diffusion_model/40851731207864_.pic.jpg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Experiment results in the paper Denoising Diffusion Probabilistic Models. DDPM outperforms most of the models
+</div>
 
 ## Challenges and Future Directions
 While diffusion models have demonstrated significant promise, they are not without challenges:
@@ -80,4 +126,5 @@ Despite these challenges, diffusion models are rapidly advancing and are likely 
 Diffusion models represent a fascinating and powerful approach to generative AI, offering high-quality and stable generation of diverse data types. Their ability to model complex distributions through a gradual process of noise addition and removal has revolutionized fields like image synthesis, super-resolution, and audio generation. While there are still challenges to overcome, diffusion models are undoubtedly a key part of the future of generative AI, and we can expect to see even more exciting applications in the coming years.
 
 As the field continues to evolve, diffusion models will likely play a crucial role in shaping the next generation of AI-powered creativity and innovation.
+
 
