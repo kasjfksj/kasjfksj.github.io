@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Diffusion model
-date: 2024-08-30 16:15:09
+date: 2024-11-08 16:15:09
 description: 
 tags: formatting images
 categories: model architecture
@@ -16,7 +16,6 @@ toc:
 In recent years, diffusion models have emerged as one of the most powerful techniques in the field of generative AI, yielding remarkable results in image, video, and audio synthesis. These models have gained significant attention for their ability to generate high-quality content, often outperforming traditional models like GANs (Generative Adversarial Networks) and VAEs (Variational Autoencoders) in various creative tasks. But what exactly are diffusion models, and why are they causing such a stir in the AI community?
 
 In this blog, we'll dive deep into the fundamentals of diffusion models, explain how they work, and explore their applications in generative tasks. By the end, you'll have a clear understanding of this cutting-edge model and how it is revolutionizing the world of generative AI.
-What Are Diffusion Models?
 
 ## What is diffusion model
 
