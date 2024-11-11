@@ -78,7 +78,7 @@ Once the forward process is defined, the goal of the diffusion model is to learn
 
 Thus, the question becomes acquiring backward probability -- $$q(x_t \vert x_{t+1})$$. However, if we directly apply bayesian laws, we get $$q(x_t \vert x_{t+1})=\frac{q(x_{t+1} \vert x_{t})q(x_t)}{q(x_{t+1})}$$. We don't know anything about $$q(x_{t+1})$$ or $$q(x_t)$$. 
 
-What we can do is using $$x_0$$ as additional information in these probabilities. Instead of solving $$q(x_t \vert x_{t+1})$$, we solve $$q(x_t \vert x_{t+1},x_0)$$. After bayesian laws we get $$q(x_t \vert x_{t+1},x_0) = \frac{q(x_{t+1} \vert x_{t},x_0)q(x_t \vert x_0)}{q(x_{t+1} \vert x_0)}$$. $$q(x_{t+1} \vert x_{t},x_0)$$ is the same as $$q(x_{t+1} \vert x_{t},x_0)$$ due to markov chain property. 
+What we can do is using $$x_0$$ as additional information in these probabilities. Instead of solving $$q(x_t \vert x_{t+1})$$, we solve $$q(x_t \vert x_{t+1},x_0)$$. After bayesian laws we get $$q(x_t \vert x_{t+1},x_0) = \frac{q(x_{t+1} \vert x_{t},x_0)q(x_t \vert x_0)}{q(x_{t+1} \vert x_0)}$$. $$q(x_{t+1} \vert x_{t},x_0)$$ is the same as $$q(x_{t+1} \vert x_{t})$$ due to markov chain property. 
 
 It turns out that $$q(x_{t+1} \vert x_0)$$ and $$q(x_t \vert x_0)$$ can be solved using reparameterization trick. The mathematical derivation of the trick is below.
 
@@ -88,7 +88,7 @@ It turns out that $$q(x_{t+1} \vert x_0)$$ and $$q(x_t \vert x_0)$$ can be solve
     </div>
 </div>
 
-Essentially, we can write $$q(x_{t+1} \vert x_0)$$ and $$q(x_t \vert x_0)$$ as $$N(x_{t+1};\sqrt{\bar{\alpha}_{t+1}}x_0, {1-\bar{\alpha}_{t+1}}^2I)$$ and $$N(x_t;\sqrt{\bar{\alpha}_t}x_0, {1-\bar{\alpha}_t}^2I)$$. After some heavy calculations, we can get $$q(x_t \vert x_{t+1},x_0)=N(x_t;\tilde{\mu_{t+1}}(x_t),\Sigma_q(t+1)I)$$. We can rewrite it as $$q(x_{t-1}\vertx_t,x_0)=N(x_{t-1};\tilde{\mu_t}(x_t),\Sigma_q(t)I)$$ where $$\tilde{\mu_t}(x_t)=\frac{1}{\alpha_t}(x_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\bar{z}_t)$$. $$\Sigma_q(t)=\frac{(1-\alpha_t)(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}$$.
+Essentially, we can write $$q(x_{t+1} \vert x_0)$$ and $$q(x_t \vert x_0)$$ as $$N(x_{t+1};\sqrt{\bar{\alpha}_{t+1}}x_0, {1-\bar{\alpha}_{t+1}}^2I)$$ and $$N(x_t;\sqrt{\bar{\alpha}_t}x_0, {1-\bar{\alpha}_t}^2I)$$. After some heavy calculations, we can get $$q(x_t \vert x_{t+1},x_0)=N(x_t;\tilde{\mu}_{t+1}(x_t),\Sigma_q(t+1)I)$$. We can rewrite it as $$q(x_{t-1}\vertx_t,x_0)=N(x_{t-1};\tilde{\mu_t}(x_t),\Sigma_q(t)I)$$ where $$\tilde{\mu_t}(x_t)=\frac{1}{\alpha_t}(x_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\bar{z}_t)$$. $$\Sigma_q(t)=\frac{(1-\alpha_t)(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}$$.
 
 3. Training the Diffusion Model
 In order to train a model, we must define its loss function. By maximizing the likelihood of data distribution $$log p_{\theta}$$ and a series of math deduction, we can get the loss function. The full derivation of loss terms is referenced [here](https://calvinyluo.com/2022/08/26/diffusion-tutorial.html)
