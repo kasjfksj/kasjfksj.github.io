@@ -71,16 +71,16 @@ To better understand diffusion models, let's break down the steps involved in bo
 1. Forward Process (Adding Noise)
 In the forward process, we start with a data point (e.g., an image) and progressively add small Gaussian noise over several time steps. As the process continues, the image becomes increasingly noisy until, at the end of the process, it resembles pure Gaussian noise. For an image $$x_0$$, at each time step t, noise is added according to the formula $$x_{t+1}=\sqrt{1-\beta_t}x_t+\beta_t\epsilon$$. $$\beta_t$$ is called noise schedule, which controls how much noise is added at each step, typically starting with a small amount and increasing as time progresses. $$\epsilon$$ is random Gaussian noise. For mathematical convenience, we may write $$\alpha_t=1-\beta_t$$, and $$x_{t+1}=\sqrt{\alpha_t}x_t+\sqrt{1-\alpha_t}\epsilon$$
 
-We can rewrite forward process in terms of probability. In this case, $$q(x_{t+1}\vert x_t)=N(x_{t+1};sqrt{\alpha_t}x_t,{1-\alpha_t}^2I)$$.
+We can rewrite forward process in terms of probability. In this case, $$q(x_{t+1}\vert x_t)=N(x_{t+1};\sqrt{\alpha_t}x_t,{1-\alpha_t}^2I)$$.
 
 2. Reverse Process (Denoising)
 Once the forward process is defined, the goal of the diffusion model is to learn the reverse process. The reverse process involves learning how to remove the noise step by step, recovering the original data distribution from the noisy version.
 
 Thus, the question becomes acquiring backward probability -- $$q(x_t \vert x_{t+1})$$. However, if we directly apply bayesian laws, we get $$q(x_t \vert x_{t+1})=\frac{q(x_{t+1} \vert x_{t})q(x_t)}{q(x_{t+1})}$$. We don't know anything about $$q(x_{t+1})$$ or $$q(x_t)$$. 
 
-What we can do is using $$x_0$$ as additional information in these probabilities. Instead of solving $$q(x_t \vert x_{t+1})$$, we solve $$q(x_t \vert x_{t+1},x_0)$$. After bayesian laws we get $$q(x_t \vert x_{t+1},x_0)=\frac{q(x_{t+1}|x_{t},x_0)q(x_t \vert x_0)}{q(x_{t+1} \vert x_0)}$$. $$q(x_{t+1} \vert x_{t},x_0)$$ is the same as $$q(x_{t+1} \vert x_{t},x_0)$$ due to markov chain property. 
+What we can do is using $$x_0$$ as additional information in these probabilities. Instead of solving $$q(x_t \vert x_{t+1})$$, we solve $$q(x_t \vert x_{t+1},x_0)$$. After bayesian laws we get $$q(x_t \vert x_{t+1},x_0)=\frac{q(x_{t+1} \vert x_{t},x_0)q(x_t \vert x_0)}{q(x_{t+1} \vert x_0)}$$. $$q(x_{t+1} \vert x_{t},x_0)$$ is the same as $$q(x_{t+1} \vert x_{t},x_0)$$ due to markov chain property. 
 
-It turns out that $$q(x_{t+1}|x_0)$$ and $$q(x_t|x_0)$$ can be solved using reparameterization trick. The mathematical derivation of the trick is below.
+It turns out that $$q(x_{t+1} \vert x_0)$$ and $$q(x_t \vert x_0)$$ can be solved using reparameterization trick. The mathematical derivation of the trick is below.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -88,7 +88,7 @@ It turns out that $$q(x_{t+1}|x_0)$$ and $$q(x_t|x_0)$$ can be solved using repa
     </div>
 </div>
 
-Essentially, we can write $$q(x_{t+1} \vert x_0)$$ and $$q(x_t \vert x_0)$$ as $$N(sqrt{\bar{\alpha}_{t+1}}x_0 \vert {1-\bar{\alpha}_{t+1}}^2I)$$ and $$N(sqrt{\bar{\alpha}_t}x_0|{1-\bar{\alpha}_t}^2I)$$. After some heavy calculations, we can get $$q(x_t \vert x_{t+1},x_0)=N(x_t;\tilde{\mu_{t+1}}(x_t),\Sigma_q(t+1)I)$$. We can rewrite it as $$q(x_{t-1}|x_t,x_0)=N(x_{t-1};\tilde{\mu_t}(x_t),\Sigma_q(t)I)$$ where $$\tilde{\mu_t}(x_t)=\frac{1}{\alpha_t}(x_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\bar{z}_t)$$. $$\Sigma_q(t)=\frac{(1-\alpha_t)(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}$$.
+Essentially, we can write $$q(x_{t+1} \vert x_0)$$ and $$q(x_t \vert x_0)$$ as $$N(x_{t+1};sqrt{\bar{\alpha}_{t+1}}x_0, {1-\bar{\alpha}_{t+1}}^2I)$$ and $$N(x_t;sqrt{\bar{\alpha}_t}x_0, {1-\bar{\alpha}_t}^2I)$$. After some heavy calculations, we can get $$q(x_t \vert x_{t+1},x_0)=N(x_t;\tilde{\mu_{t+1}}(x_t),\Sigma_q(t+1)I)$$. We can rewrite it as $$q(x_{t-1}\vertx_t,x_0)=N(x_{t-1};\tilde{\mu_t}(x_t),\Sigma_q(t)I)$$ where $$\tilde{\mu_t}(x_t)=\frac{1}{\alpha_t}(x_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\bar{z}_t)$$. $$\Sigma_q(t)=\frac{(1-\alpha_t)(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}$$.
 
 3. Training the Diffusion Model
 In order to train a model, we must define its loss function. By maximizing the likelihood of data distribution $$log p_{\theta}$$ and a series of math deduction, we can get the loss function. The full derivation of loss terms is referenced [here](https://calvinyluo.com/2022/08/26/diffusion-tutorial.html)
@@ -102,9 +102,9 @@ First term is called reconstruction term, which measures how well the reconstruc
 
 Second term is called prior matching term, which describes how well the final latent space $$p_T$$ matches standard Gaussian distribution. Normally we treat it as 0 under the assumption that the final output will be random noise after adding multiple small amount of noises.
 
-The third term is called denoising matching term, which matches denoising distribution $$q(x_{t-1}|x_t,x_0)$$ with model's prediction $$p_{\theta}(x_{t-1}|x_t)$$. We can parameterize the mean of model's prediction as $$p_{\theta}(x_{t-1}|x_t)=N(x_{t-1};\tilde{\mu_{\theta}}(x_t,t),\Sigma_q(t)I)$$. 
+The third term is called denoising matching term, which matches denoising distribution $$q(x_{t-1}\vert x_t,x_0)$$ with model's prediction $$p_{\theta}(x_{t-1} \vert x_t)$$. We can parameterize the mean of model's prediction as $$p_{\theta}(x_{t-1} \vert x_t)=N(x_{t-1};\tilde{\mu_{\theta}}(x_t,t),\Sigma_q(t)I)$$. 
 
-Recall that $$q(x_{t-1}|x_t,x_0)=N(x_{t-1};\tilde{\mu_t}(x_t),\Sigma_q(t)I)$$. Applying KL divergence, we can get the loss function $$\frac{1}{2{\Sigma_q(t)}^2}[{ \paralle \mu_{\theta}-\mu_t \paralle}^2]$$. 
+Recall that $$q(x_{t-1} \vert x_t,x_0)=N(x_{t-1};\tilde{\mu_t}(x_t),\Sigma_q(t)I)$$. Applying KL divergence, we can get the loss function $$\frac{1}{2{\Sigma_q(t)}^2}[{ \paralle \mu_{\theta}-\mu_t \paralle}^2]$$. 
 
 The author of the [paper](https://arxiv.org/pdf/2006.11239) finds out that we can directly predict noise instead of the mean, which makes the loss function look like this one: $$C[{ \paralle \epsilon_{\theta}-\epsilon_t \paralle}^2]$$ where C is a constant.
 
