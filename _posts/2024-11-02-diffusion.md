@@ -71,12 +71,12 @@ To better understand diffusion models, let's break down the steps involved in bo
 1. Forward Process (Adding Noise)
 In the forward process, we start with a data point (e.g., an image) and progressively add small Gaussian noise over several time steps. As the process continues, the image becomes increasingly noisy until, at the end of the process, it resembles pure Gaussian noise. For an image $$x_0$$, at each time step t, noise is added according to the formula $$x_{t+1}=\sqrt{1-\beta_t}x_t+\beta_t\epsilon$$. $$\beta_t$$ is called noise schedule, which controls how much noise is added at each step, typically starting with a small amount and increasing as time progresses. $$\epsilon$$ is random Gaussian noise. For mathematical convenience, we may write $$\alpha_t=1-\beta_t$$, and $$x_{t+1}=\sqrt{\alpha_t}x_t+\sqrt{1-\alpha_t}\epsilon$$
 
-We can rewrite forward process in terms of probability. In this case, $$q(x_{t+1};\middle|\; x_t)=N(x_{t+1};sqrt{\alpha_t}x_t,{1-\alpha_t}^2I)$$.
+We can rewrite forward process in terms of probability. In this case, $$q(x_{t+1}\vert x_t)=N(x_{t+1};sqrt{\alpha_t}x_t,{1-\alpha_t}^2I)$$.
 
 2. Reverse Process (Denoising)
 Once the forward process is defined, the goal of the diffusion model is to learn the reverse process. The reverse process involves learning how to remove the noise step by step, recovering the original data distribution from the noisy version.
 
-Thus, the question becomes acquiring backward probability--$$q(x_t \vert x_{t+1})$$. However, if we directly apply bayesian laws, we get $$q(x_t \vert x_{t+1})=\frac{q(x_{t+1} \vert x_{t})q(x_t)}{q(x_{t+1})}$$. We don't know anything about $$q(x_{t+1})$$ or $$q(x_t)$$. 
+Thus, the question becomes acquiring backward probability -- $$q(x_t \vert x_{t+1})$$. However, if we directly apply bayesian laws, we get $$q(x_t \vert x_{t+1})=\frac{q(x_{t+1} \vert x_{t})q(x_t)}{q(x_{t+1})}$$. We don't know anything about $$q(x_{t+1})$$ or $$q(x_t)$$. 
 
 What we can do is using $$x_0$$ as additional information in these probabilities. Instead of solving $$q(x_t \vert x_{t+1})$$, we solve $$q(x_t \vert x_{t+1},x_0)$$. After bayesian laws we get $$q(x_t \vert x_{t+1},x_0)=\frac{q(x_{t+1}|x_{t},x_0)q(x_t \vert x_0)}{q(x_{t+1} \vert x_0)}$$. $$q(x_{t+1} \vert x_{t},x_0)$$ is the same as $$q(x_{t+1} \vert x_{t},x_0)$$ due to markov chain property. 
 
