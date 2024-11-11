@@ -88,7 +88,7 @@ It turns out that $$q(x_{t+1} \vert x_0)$$ and $$q(x_t \vert x_0)$$ can be solve
     </div>
 </div>
 
-Essentially, we can write $$q(x_{t+1} \vert x_0)$$ and $$q(x_t \vert x_0)$$ as $$N(x_{t+1};\sqrt{\bar{\alpha}_{t+1}}x_0, {1-\bar{\alpha}_{t+1}}^2I)$$ and $$N(x_t;\sqrt{\bar{\alpha}_t}x_0, {1-\bar{\alpha}_t}^2I)$$. After some heavy calculations, we can get $$q(x_t \vert x_{t+1},x_0)=N(x_t;\tilde{\mu}_{t+1}(x_t),\Sigma_q(t+1)I)$$. We can rewrite it as $$q(x_{t-1}\vertx_t,x_0)=N(x_{t-1};\tilde{\mu_t}(x_t),\Sigma_q(t)I)$$ where $$\tilde{\mu_t}(x_t)=\frac{1}{\alpha_t}(x_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\bar{z}_t)$$. $$\Sigma_q(t)=\frac{(1-\alpha_t)(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}$$.
+Essentially, we can write $$q(x_{t+1} \vert x_0)$$ and $$q(x_t \vert x_0)$$ as $$N(x_{t+1};\sqrt{\bar{\alpha}_{t+1}}x_0, {1-\bar{\alpha}_{t+1}}^2I)$$ and $$N(x_t;\sqrt{\bar{\alpha}_t}x_0, {1-\bar{\alpha}_t}^2I)$$. After some heavy calculations, we can get $$q(x_t \vert x_{t+1},x_0)=N(x_t;\tilde{\mu}_{t+1}(x_t),\Sigma_q(t+1)I)$$. We can rewrite it as $$q(x_{t-1}\vert x_t,x_0)=N(x_{t-1};\tilde{\mu_t}(x_t),\Sigma_q(t)I)$$ where $$\tilde{\mu_t}(x_t)=\frac{1}{\alpha_t}(x_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\bar{z}_t)$$. $$\Sigma_q(t)=\frac{(1-\alpha_t)(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}$$.
 
 3. Training the Diffusion Model
 In order to train a model, we must define its loss function. By maximizing the likelihood of data distribution $$log p_{\theta}$$ and a series of math deduction, we can get the loss function. The full derivation of loss terms is referenced [here](https://calvinyluo.com/2022/08/26/diffusion-tutorial.html)
@@ -104,9 +104,9 @@ Second term is called prior matching term, which describes how well the final la
 
 The third term is called denoising matching term, which matches denoising distribution $$q(x_{t-1}\vert x_t,x_0)$$ with model's prediction $$p_{\theta}(x_{t-1} \vert x_t)$$. We can parameterize the mean of model's prediction as $$p_{\theta}(x_{t-1} \vert x_t)=N(x_{t-1};\tilde{\mu_{\theta}}(x_t,t),\Sigma_q(t)I)$$. 
 
-Recall that $$q(x_{t-1} \vert x_t,x_0)=N(x_{t-1};\tilde{\mu_t}(x_t),\Sigma_q(t)I)$$. Applying KL divergence, we can get the loss function $$\frac{1}{2{\Sigma_q(t)}^2}[{ \paralle \mu_{\theta}-\mu_t \paralle}^2]$$. 
+Recall that $$q(x_{t-1} \vert x_t,x_0)=N(x_{t-1};\tilde{\mu_t}(x_t),\Sigma_q(t)I)$$. Applying KL divergence, we can get the loss function $$\frac{1}{2{\Sigma_q(t)}^2}[{ \parallel \mu_{\theta}-\mu_t \parallel}^2]$$. 
 
-The author of the [paper](https://arxiv.org/pdf/2006.11239) finds out that we can directly predict noise instead of the mean, which makes the loss function look like this one: $$C[{ \paralle \epsilon_{\theta}-\epsilon_t \paralle}^2]$$ where C is a constant.
+The author of the [paper](https://arxiv.org/pdf/2006.11239) finds out that we can directly predict noise instead of the mean, which makes the loss function look like this one: $$C[{ \parallel \epsilon_{\theta}-\epsilon_t \parallel }^2]$$ where C is a constant.
 
 4. Sampling from the Diffusion Model
 Once trained, the model can generate new data by starting with a random noise sample and iteratively denoising it through the reverse process until a realistic sample is produced. As the model predicts the noise at time t, it will subtract that noise from sampled image to get less noiser image.
