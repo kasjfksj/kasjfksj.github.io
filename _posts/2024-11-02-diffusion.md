@@ -69,16 +69,56 @@ Diffusion models belong to the broader family of probabilistic models, where the
 To better understand diffusion models, let's break down the steps involved in both the forward and reverse processes.
 
 1. Forward Process (Adding Noise)
-In the forward process, we start with a data point (e.g., an image) and progressively add small Gaussian noise over several time steps. As the process continues, the image becomes increasingly noisy until, at the end of the process, it resembles pure Gaussian noise. For an image $$x_0$$, at each time step t, noise is added according to the formula $$x_{t+1}=\sqrt{1-\beta_t}x_t+\beta_t\epsilon$$. $$\beta_t$$ is called noise schedule, which controls how much noise is added at each step, typically starting with a small amount and increasing as time progresses. $$\epsilon$$ is random Gaussian noise. 
+In the forward process, we start with a data point (e.g., an image) and progressively add small Gaussian noise over several time steps. As the process continues, the image becomes increasingly noisy until, at the end of the process, it resembles pure Gaussian noise. For an image $$x_0$$, at each time step t, noise is added according to the formula $$x_{t+1}=\sqrt{1-\beta_t}x_t+\beta_t\epsilon$$. $$\beta_t$$ is called noise schedule, which controls how much noise is added at each step, typically starting with a small amount and increasing as time progresses. $$\epsilon$$ is random Gaussian noise. For mathematical convenience, we may write $$\alpha_t=1-\beta_t$$, and $$x_{t+1}=\sqrt{\alpha_t}x_t+\sqrt{1-\alpha_t}\epsilon$$
+
+We can rewrite forward process in terms of probability. In this case, $$q(x_{t+1}|x_t)=N(x_{t+1};sqrt{\alpha_t}x_t,{1-\alpha_t}^2I)$$.
 
 2. Reverse Process (Denoising)
 Once the forward process is defined, the goal of the diffusion model is to learn the reverse process. The reverse process involves learning how to remove the noise step by step, recovering the original data distribution from the noisy version.
 
+Thus, the question becomes acquiring backward probability--$$q(x_t|x_{t+1})$$. However, if we directly apply bayesian laws, we get $$q(x_t|x_{t+1})=\frac{q(x_{t+1}|x_{t})q(x_t)}{q(x_{t+1})}$$. We don't know anything about $$q(x_{t+1})$$ or $$q(x_t)$$. 
+
+What we can do is using $$x_0$$ as additional information in these probabilities. Instead of solving $$q(x_t|x_{t+1})$$, we solve $$q(x_t|x_{t+1},x_0)$$. After bayesian laws we get $$q(x_t|x_{t+1},x_0)=\frac{q(x_{t+1}|x_{t},x_0)q(x_t|x_0)}{q(x_{t+1}|x_0)}$$. $$q(x_{t+1}|x_{t},x_0)$$ is the same as $$q(x_{t+1}|x_{t},x_0)$$ due to markov chain property. 
+
+It turns out that $$q(x_{t+1}|x_0)$$ and $$q(x_t|x_0)$$ can be solved using reparameterization trick. The mathematical derivation of the trick is below.
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/diffusion_model/40971731361785_.pic.jpg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+
+Essentially, we can write $$q(x_{t+1}|x_0)$$ and $$q(x_t|x_0)$$ as $$N(sqrt{\bar{\alpha}_{t+1}}x_0|{1-\bar{\alpha}_{t+1}}^2I)$$ and $$N(sqrt{\bar{\alpha}_t}x_0|{1-\bar{\alpha}_t}^2I)$$. After some heavy calculations, we can get $$q(x_t|x_{t+1},x_0)=N(x_t;\tilde{\mu_{t+1}}(x_t),\Sigma_q(t+1)I)$$. We can rewrite it as $$q(x_{t-1}|x_t,x_0)=N(x_{t-1};\tilde{\mu_t}(x_t),\Sigma_q(t)I)$$ where $$\tilde{\mu_t}(x_t)=\frac{1}{\alpha_t}(x_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\bar{z}_t)$$. $$\Sigma_q(t)=\frac{(1-\alpha_t)(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}$$.
+
 3. Training the Diffusion Model
-Training a diffusion model involves learning the distribution of the reverse diffusion process. During training, the model tries to predict the noise added in time $$T$$, given by the noisy image and time information $$T$$. The noise prediction is often written in L2 loss.
+In order to train a model, we must define its loss function. By maximizing the likelihood of data distribution $$log p_{\theta}$$ and a series of math deduction, we can get the loss function. The full derivation of loss terms is referenced [here](https://calvinyluo.com/2022/08/26/diffusion-tutorial.html)
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/diffusion_model/40981731363428_.pic.jpg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+
+First term is called reconstruction term, which measures how well the reconstructed image match the original image.
+
+Second term is called prior matching term, which describes how well the final latent space $$p_T$$ matches standard Gaussian distribution. Normally we treat it as 0 under the assumption that the final output will be random noise after adding multiple small amount of noises.
+
+The third term is called denoising matching term, which matches denoising distribution $$q(x_{t-1}|x_t,x_0)$$ with model's prediction $$p_{\theta}(x_{t-1}|x_t)$$. We can parameterize the mean of model's prediction as $$p_{\theta}(x_{t-1}|x_t)=N(x_{t-1};\tilde{\mu_{\theta}}(x_t,t),\Sigma_q(t)I)$$. 
+
+Recall that $$q(x_{t-1}|x_t,x_0)=N(x_{t-1};\tilde{\mu_t}(x_t),\Sigma_q(t)I)$$. Applying KL divergence, we can get the loss function $$\frac{1}{2{\Sigma_q(t)}^2}[{ \paralle \mu_{\theta}-\mu_t \paralle}^2]$$. 
+
+The author of the [paper](https://arxiv.org/pdf/2006.11239) finds out that we can directly predict noise instead of the mean, which makes the loss function look like this one: $$C[{ \paralle \epsilon_{\theta}-\epsilon_t \paralle}^2]$$ where C is a constant.
 
 4. Sampling from the Diffusion Model
-Once trained, the model can generate new data by starting with a random noise sample and iteratively denoising it through the reverse process until a realistic sample is produced. This process the model predicting the noise that was added to the image at time T, so as t produce the less noisy image at time T-1.
+Once trained, the model can generate new data by starting with a random noise sample and iteratively denoising it through the reverse process until a realistic sample is produced. As the model predicts the noise at time t, it will subtract that noise from sampled image to get less noiser image.
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/diffusion_model/40991731364598_.pic.jpg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    The training and sampling process in DDPM paper.
+</div>
 
 ## Applications of Diffusion Models
 
@@ -99,10 +139,8 @@ Generating video frames is a more complex task, but diffusion models are also ma
 ## Why Are Diffusion Models So Effective?
 
 There are several reasons why diffusion models have become so popular in generative AI:
-1.	Stability: Unlike GANs, which can suffer from training instability (e.g., mode collapse), diffusion models tend to be more stable during training, as they optimize a simpler objective—predicting noise at each step rather than directly generating data.
-2.	High-Quality Output: Diffusion models have been shown to produce exceptionally high-quality and diverse outputs. The gradual denoising process allows the model to generate highly detailed and coherent data.
-3.	Flexibility: Diffusion models can be applied to a wide range of generative tasks, from images to audio to text, making them a versatile tool in the AI toolbox.
-4.	Scalability: Diffusion models are scalable and can be trained on large datasets, enabling them to learn complex data distributions and generate high-dimensional outputs.
+1.	Stability: Unlike GANs, which can suffer from training instability, diffusion models tend to be more stable during training, as they optimize a simpler objective—predicting noise at each step rather than 2 objectives of generating and discriminating images.
+2.	High-Quality and Diverse Output: Due to its direct operations over continuous distributions and the randomness in the diffusion process, it can generate high-quality and diverse images.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -110,7 +148,7 @@ There are several reasons why diffusion models have become so popular in generat
     </div>
 </div>
 <div class="caption">
-    Experiment results in the paper Denoising Diffusion Probabilistic Models. DDPM outperforms most of the models
+    Experiment results in the paper Denoising Diffusion Probabilistic Models. DDPM outperforms most of the models.
 </div>
 
 ## Challenges and Future Directions
