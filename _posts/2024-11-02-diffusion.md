@@ -32,19 +32,15 @@ Before diffusion model was proposed, there were already several generative model
 
 1. Variational Autoencoders (VAEs)
 Variational Autoencoders (VAEs) are a class of generative models that rely on the variational inference framework. The model learns an encoder-decoder structure, where encoder maps the input data to a probabilistic latent space (usually Gaussian). Decoder maps the latent space back to the data space to generate new samples.
-
 VAEs optimize a lower bound on the log-likelihood of the data using the ELBO (Evidence Lower Bound), which includes a reconstruction term and a regularization term that enforces the learned latent distribution to be close to a prior distribution (usually Gaussian).
-
 There are 2 limitations of VAE. Firstly, its generated samples may lack sharpness and realism. Secondly, the regularization in VAEs can sometimes result in blurry outputs due to the continuous latent space.
 
 2. Generative Adversarial Networks (GANs)
 Generative Adversarial Networks (GANs) consist of two neural networks — a generator and a discriminator — that compete against each other in a minimax game. The generator creates synthetic data, and the discriminator tries to distinguish between real and fake data. The goal is for the generator to create data that is indistinguishable from real data, according to the discriminator.
-
 There are 2 limitations of GAN. Firstly, GANs has instability during training session due to optimization of minmax game. Secondly ,they are prone to mode collapse, where the model fails to capture the full diversity of the data distribution.
 
 3. Normalizing Flows (NF)
 Normalizing Flows (NF) are another class of generative models that provide a way to transform simple distributions (e.g., Gaussian) into complex ones via a series of invertible transformations. The key idea is that the model learns a sequence of invertible functions that map a simple distribution to the target data distribution. 
-
 Normalizing Flows resemble to diffusion models where both of them try to trace from simple distributions into complex data distribution via transformations. However, there are 2 limitations in NF. Firstly, it's computationally expensive due to the need for invertible transformations, which can make them less scalable for high-dimensional data. Secondly, it's not flexible when the transformations need to be invertible. 
 
 ## What is diffusion model
@@ -155,7 +151,9 @@ There are several reasons why diffusion models have become so popular in generat
 While diffusion models have demonstrated significant promise, they are not without challenges:
 
 •	Computational Expense: Diffusion models typically require a large number of time steps to generate data, which makes the sampling process computationally expensive. However, researchers are actively working on techniques to reduce this computational cost while maintaining output quality.
+
 •	Sampling Speed: Due to the iterative nature of the reverse diffusion process, generating data with diffusion models can be slower than other generative models like GANs. There is ongoing research into speeding up the sampling process.
+
 •	Data Efficiency: Diffusion models tend to require a large amount of training data to perform well, which can be a limitation in some cases.
 
 Despite these challenges, diffusion models are rapidly advancing and are likely to remain at the forefront of generative AI research for the foreseeable future.
