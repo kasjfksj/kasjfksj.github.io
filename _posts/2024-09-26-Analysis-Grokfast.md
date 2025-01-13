@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Grokking - a possible way to achieve AGI
-date: 2024-08-30 16:15:09
+date: 2024-10-10 16:15:09
 description: 
 tags: formatting images
 categories: encoding method

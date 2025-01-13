@@ -1,7 +1,7 @@
 ---
 layout: post
 title: History of Position Encoding
-date: 2024-08-22 16:15:09
+date: 2024-08-24 16:15:09
 description: 
 categories: encoding method
 giscus_comments: true
@@ -11,7 +11,7 @@ toc:
   sidebar: left
 ---
 
-## Background-Positional information
+# Background-Positional information
 
 Compared with other sequential model like LSTM and RNN, Transformers are much more successful and serve as the foundation of current language models. These transformer-based LLM achieve higher accuracy than other architecture and can scale up easily due to the parallel computing of Transformer. However, Transformers have its flaws. It requires more computation resources than Sequential model with time complexity of $$O (N^2)$$. Also, without external help, Transformers can't acquire positional information that is important when dealing with sequential data.
 
@@ -35,7 +35,7 @@ However, for transformers, all words are passed in all at once. The sequential m
 
 Of course, we can just simply assign 1, 2, 3, etc to each word position, but researchers found out better ways to encode position of words.
 
-## Absolute Positional Encoding - Sinusoidal Positional encoding
+# Absolute Positional Encoding - Sinusoidal Positional encoding
 
 Absolute positioinal encoding is first introduced in the paper Attention Is All You Need. It uses trigonometry function, sine and cosine, to encode positions. 
 
@@ -80,7 +80,11 @@ Questions:
 2. Why many people call sinusoidal positional encoding as absolute? They say it can't learn relative positional information.
    a.  I searched online looking for answers why this encoding method is absolute and can't acquire distance between words. Sadly, all the blog I have checked so far didn't contain detailed mathematical formula to prove it. I guess they call it absolute simply because it only takes the input of current word position and no other word positions. 
 
-## Conclusion
+# Rotary Positional Encoding
+
+
+
+# Conclusion
 
 Positional encoding is one of the most important feature in Transformer. This blog covers one of the encoding method, the Absolute Positional encoding. Many people say about this absolute positional encoding can't acquire relative distance two words because it's "absolute." However, I do some mathematical deduction and show that this encoding method can learn the relative distance between two words. Therefore, it's useful in acquiring information beside the current position of the word. 
 
