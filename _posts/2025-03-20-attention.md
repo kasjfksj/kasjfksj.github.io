@@ -23,11 +23,15 @@ In Transformers, Attention is formalized as Scaled Dot-Product Attention. Given 
 $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 
 Where:
-    $$Q \in \mathbb{R}^{n \times d_k}$$:Query matrix,
-    $$K \in \mathbb{R}^{m \times d_k}$$:Key matrix,
-    $$V \in \mathbb{R}^{m \times d_v}$$:Value matrix,
-    $$d_k$$:Dimension of the key vector,
-    $$\sqrt{d_k}$$:Scaling factor to prevent excessively large dot product results.
+$$
+\begin{enumerate}
+    \item $$Q \in \mathbb{R}^{n \times d_k}$$:Query matrix,
+    \item $$K \in \mathbb{R}^{m \times d_k}$$:Key matrix,
+    \item $$V \in \mathbb{R}^{m \times d_v}$$:Value matrix,
+    \item $$d_k$$:Dimension of the key vector,
+    \item $$\sqrt{d_k}$$:Scaling factor to prevent excessively large dot product results.
+\end{enumerate}
+$$
 
 ## Dynamic Weight Allocation
 Attention calculates the similarity between queries and keys to generate a weight matrix, then performs weighted summation over the value matrix. This process can be decomposed into:
@@ -94,3 +98,19 @@ Future directions include:
 
 More efficient position encoding methods (e.g., hybrid absolute/relative position encoding).
 Sparse acceleration of Attention computation (e.g., Longformer, BigBird).
+
+
+
+
+
+To Do: Add architecture diagrams showing:
+a) Scaled dot-product attention computation flow
+b) Multi-head attention's parallel processing
+c) RoPE's rotation matrix operations
+
+proof of translational invariance for position encoding
+
+add code to showcase procedure
+
+Add training optimization tips:
+Include real-world impact metrics
