@@ -49,12 +49,13 @@ $$Q_i = QW_i^Q, \quad K_i = KW_i^K, \quad V_i = VW_i^V$$
 
 Where
 $$
-\begin{enumerate}
+\begin
     \item $W_i^Q \in \mathbb{R}^{d_k \times d_k}, $
     \item $W_i^K \in \mathbb{R}^{d_k \times d_k},$
     \item $W_i^V \in \mathbb{R}^{d_v \times d_v} are learnable weight matrices.$
-\end{enumerate}
+\end
 $$
+
 Parallel Computation of Attention : Each head independently computes Attention:
 $$\text{head}_i = \text{Attention}(Q_i, K_i, V_i)$$
 
