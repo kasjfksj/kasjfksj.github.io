@@ -78,20 +78,33 @@ $$
 Traditional Transformers use absolute position encoding (e.g., sine functions) to introduce sequence order information, but modeling positional relationships in long sequences remains limited. RoPE incorporates positional information into Attention calculations via rotation matrices, significantly improving performance.
 
 ## Mathematical Definition of RoPE
-For positions $$m$$ and $$n$$，RoPE transforms query and key vectors using rotation matrices $$R(m)$$ and $$R(n)$$:
+For positions $$m$$ and $$n$$，RoPE transforms query and key vectors using rotation matrices $$R_m$$ and $$R_n$$:
 
 $$
-\boldsymbol{q}' = R(m)\boldsymbol{q}, \quad \boldsymbol{k}' = R(n)\boldsymbol{k}
+\boldsymbol{q}' = R_m\boldsymbol{q}, \quad \boldsymbol{k}' = R_n\boldsymbol{k}
 $$
 
 Where the rotation matrix$$R(m)$$ is defined as:
 
-$$R(m) =\begin{pmatrix}\cos(m\theta_i) & -\sin(m\theta_i) \\\sin(m\theta_i) & \cos(m\theta_i)\end{pmatrix}$$
+$$
+\mathbf{R}_t = \begin{pmatrix}
+\cos t\theta_1 & -\sin t\theta_1 & \cdots & 0 \\
+\sin t\theta_1 & \cos t\theta_1 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \cos t\theta_{d/2} & -\sin t\theta_{d/2} \\
+0 & 0 & \cdots & \sin t\theta_{d/2} & \cos t\theta_{d/2}
+\end{pmatrix}
+$$
 
 ## Physical Meaning of RoPE
 Relative Position Encoding: Rotation operations make Attention scores depend only on relative positions $$ m - n $$
 
 Theoretical Guarantee : RoPE satisfies translational invariance for position encoding $$\mathbf{q}_m' \cdot \mathbf{k}_n' = f(m - n)$$.
+
+$$
+\mathbf{q}'_m \cdot \mathbf{k}'_n = \sum_{i=1}^{d/2} \left[ q_m^{(2i-1)}k_n^{(2i-1)} + q_m^{(2i)}k_n^{(2i)} \right]\cos((m-n)\theta_i) \\ 
++ \left[ q_m^{(2i)}k_n^{(2i-1)} - q_m^{(2i-1)}k_n^{(2i)} \right]\sin((m-n)\theta_i)
+$$
 
 ## Experimental Results
 Using RoPE, the language model's perplexity dropped significantly from 144 to 97 (a reduction of 32.6%), especially effective in long-text generation tasks.
@@ -239,7 +252,6 @@ Sparse acceleration of Attention computation (e.g., Longformer, BigBird).
 
 
 To Do: Add architecture diagrams showing:
-a) Scaled dot-product attention computation flow
 b) Multi-head attention's parallel processing
 c) RoPE's rotation matrix operations
 
