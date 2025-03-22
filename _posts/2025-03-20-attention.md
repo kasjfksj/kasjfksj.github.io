@@ -22,16 +22,13 @@ In Transformers, Attention is formalized as Scaled Dot-Product Attention. Given 
 
 $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 
-Where:
-$$
-\begin{enumerate}
-    \item $ Q \in \mathbb{R}^{n \times d_k}:Query matrix, $
-    \item $ K \in \mathbb{R}^{m \times d_k}:Key matrix, $
-    \item $ V \in \mathbb{R}^{m \times d_v}:Value matrix, $
-    \item $ d_k:Dimension of the key vector, $
-    \item $ \sqrt{d_k}:Scaling factor to prevent excessively large dot product results.$
-\end{enumerate}
-$$
+Where:<br>
+    $$Q \in \mathbb{R}^{n \times d_k}$$ :Query matrix,<br>
+    $$K \in \mathbb{R}^{m \times d_k}$$ :Key matrix, <br>
+    $$V \in \mathbb{R}^{m \times d_v}$$ :Value matrix, <br>
+    $$d_k$$ :Dimension of the key vector,<br>
+    $$\sqrt{d_k}$$ :Scaling factor to prevent excessively large dot product results.<br>
+
 
 ## Dynamic Weight Allocation
 Attention calculates the similarity between queries and keys to generate a weight matrix, then performs weighted summation over the value matrix. This process can be decomposed into:
@@ -47,24 +44,21 @@ To enhance the model's expressive power, Transformers introduced Multi-Head Atte
 Linear Transformation : For each head, map $$Q$$, $$K$$, $$V$$ to different subspaces:
 $$Q_i = QW_i^Q, \quad K_i = KW_i^K, \quad V_i = VW_i^V$$        
 
-Where
-$$
-\begin
-    \item $W_i^Q \in \mathbb{R}^{d_k \times d_k}, $
-    \item $W_i^K \in \mathbb{R}^{d_k \times d_k},$
-    \item $W_i^V \in \mathbb{R}^{d_v \times d_v} are learnable weight matrices.$
-\end
-$$
+Where<br>
+    $$W_i^Q \in \mathbb{R}^{d_k \times d_k}$$,<br>
+    $$W_i^K \in \mathbb{R}^{d_k \times d_k}$$,<br>
+    $$W_i^V \in \mathbb{R}^{d_v \times d_v}$$ are learnable weight matrices.<br>
 
-Parallel Computation of Attention : Each head independently computes Attention:
+
+Parallel Computation of Attention : Each head independently computes Attention:<br>
 $$\text{head}_i = \text{Attention}(Q_i, K_i, V_i)$$
 
-Concatenation and Output Transformation : Concatenate the outputs of all heads and apply a linear transformation:
+Concatenation and Output Transformation : Concatenate the outputs of all heads and apply a linear transformation:<br>
 $$\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)W^O$$
 
-Where:
-    $$W^O \in \mathbb{R}^{h \cdot d_v \times d_{\text{model}}}$$: Output weight matrix,
-    $$h$$:  Number of heads.
+Where:<br>
+    $$W^O \in \mathbb{R}^{h \cdot d_v \times d_{\text{model}}}$$: Output weight matrix,<br>
+    $$h$$:  Number of heads.<br>
 
 ## Why Use Multi-Head?
 $$
