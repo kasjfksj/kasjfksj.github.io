@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Diffusion model
+title: Diffusion series - diffusion model
 date: 2024-04-24 16:15:09
 description: 
 tags: formatting images
@@ -11,43 +11,9 @@ toc:
   sidebar: left
 ---
 
-# Introduction
+# Solver
 
-In recent years, diffusion models have emerged as one of the most powerful techniques in the field of generative AI, yielding remarkable results in image, video, and audio synthesis. These models have gained significant attention for their ability to generate high-quality content, often outperforming traditional models like GANs (Generative Adversarial Networks) and VAEs (Variational Autoencoders) in various creative tasks. But what exactly are diffusion models, and why are they causing such a stir in the AI community?
-
-In this blog, we'll dive deep into the fundamentals of diffusion models, explain how they work, and explore their applications in generative tasks. By the end, you'll have a clear understanding of this cutting-edge model and how it is revolutionizing the world of generative AI.
-
-# Limitations of other models
-
-Before diffusion model was proposed, there were already several generative models, but all of them had some limitations
-
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/diffusion_model/40841731207612_.pic.jpg" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Comparison of architectures of different models.
-</div>
-
-1. Variational Autoencoders (VAEs)
-Variational Autoencoders (VAEs) are a class of generative models that rely on the variational inference framework. The model learns an encoder-decoder structure, where encoder maps the input data to a probabilistic latent space (usually Gaussian). Decoder maps the latent space back to the data space to generate new samples.
-VAEs optimize a lower bound on the log-likelihood of the data using the ELBO (Evidence Lower Bound), which includes a reconstruction term and a regularization term that enforces the learned latent distribution to be close to a prior distribution (usually Gaussian).
-There are 2 limitations of VAE. Firstly, its generated samples may lack sharpness and realism. Secondly, the regularization in VAEs can sometimes result in blurry outputs due to the continuous latent space.
-
-2. Generative Adversarial Networks (GANs)
-Generative Adversarial Networks (GANs) consist of two neural networks — a generator and a discriminator — that compete against each other in a minimax game. The generator creates synthetic data, and the discriminator tries to distinguish between real and fake data. The goal is for the generator to create data that is indistinguishable from real data, according to the discriminator.
-There are 2 limitations of GAN. Firstly, GANs has instability during training session due to optimization of minmax game. Secondly ,they are prone to mode collapse, where the model fails to capture the full diversity of the data distribution.
-
-3. Normalizing Flows (NF)
-Normalizing Flows (NF) are another class of generative models that provide a way to transform simple distributions (e.g., Gaussian) into complex ones via a series of invertible transformations. The key idea is that the model learns a sequence of invertible functions that map a simple distribution to the target data distribution. 
-Normalizing Flows resemble to diffusion models where both of them try to trace from simple distributions into complex data distribution via transformations. However, there are 2 limitations in NF. Firstly, it's computationally expensive due to the need for invertible transformations, which can make them less scalable for high-dimensional data. Secondly, it's not flexible when the transformations need to be invertible. 
-
-# What is diffusion model
-
-Diffusion models are a class of generative models that gradually add noise to data, transform it into pure noise, and then learn to recover the data through the reverse diffusion process. This is akin to simulating the way particles diffuse through a medium, but instead of particles, the model learns to diffuse data (like images, audio, etc.).
-
-# Key insighsts behind diffusion model
+## DDPM
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">

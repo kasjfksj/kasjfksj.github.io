@@ -48,3 +48,5 @@ Honestly, the initial pressure was intense—immersing myself in practical codin
 This incredible summer is still ongoing and truly feels wonderful. From randomly spotting a post on Discord and applying on a whim, to stumbling through reading papers, to being pulled straight into the lab early just for being proactive, to having my efforts help the lab… the whole process has been full of surprises and joy.
 
 The biggest takeaway: ​​When an opportunity comes, whether you feel ready or not—go for it!​​ Once you’re in a team, be proactive and put in extra effort—it pays off. Even though I knew nothing about software engineering initially, this summer research truly immersed me in the field. I learned practical skills and met incredibly smart people. This summer research experience at UIUC will absolutely be the most valuable and unforgettable highlight of my year.
+
+
