@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Diffusion series - VAE model
-date: 2024-04-24 16:15:09
+date: 2025-11-19 16:15:09
 description: 
 tags: formatting images
 categories: model architecture
