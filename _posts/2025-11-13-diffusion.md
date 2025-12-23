@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Diffusion series - VAE model
-date: 2025-11-19 16:15:09
+title: Diffusion series - DDPM model
+date: 2025-11-20 16:15:09
 description: 
 tags: formatting images
 categories: model architecture
