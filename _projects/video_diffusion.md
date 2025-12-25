@@ -11,7 +11,7 @@ related_publications: false
 # Background
 Current diffusion models for video generation are limited to producing a fixed number of frames, often resulting in short clips that lack the ability to maintain long-term consistency across extended sequences. 
 
-<img src="assets/img/video_diffusion/DVM_arch.png" alt="Architecture of the Diffusion Video Model" width="800"/>
+<img src="/Users/alexanderlee/Documents/编程/alexanderlee.github.io/assets/img/video_diffusion/DVM_arch.png" alt="Architecture of the Diffusion Video Model" width="800"/>
 
 This constraint stems from the inherent design of these models, which are trained to generate a constant frame length without mechanisms to seamlessly extend or connect sequences.
 
