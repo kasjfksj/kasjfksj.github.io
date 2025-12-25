@@ -11,7 +11,7 @@ related_publications: false
 # Background
 Current diffusion models for video generation are limited to producing a fixed number of frames, often resulting in short clips that lack the ability to maintain long-term consistency across extended sequences. 
 
-{% include figure.liquid loading="eager" path="assets/img/video_diffusion/DVM_arch.png" title="Architecture of the Diffusion Video Model" class="img-fluid rounded z-depth-1" %}
+{% include figure.liquid loading="eager" path="assets/img/video_diffusion/DVM_arch.png" caption="Architecture of the Diffusion Video Model" class="img-fluid rounded z-depth-1" %}
 
 This constraint stems from the inherent design of these models, which are trained to generate a constant frame length without mechanisms to seamlessly extend or connect sequences.
 
@@ -42,8 +42,8 @@ Ultimately, direct feature injection avoided these issues by directly perturbing
 Comparison of injection method and guidance method
 
 | Injection (800 steps)                          | Guidance                                |
-|------------------------------------------|-----------------------------------------|
-| ![Injection](assets/img/video_diffusion/long_video_7197_injection_800.gif) | ![Guidance](assets/img/video_diffusion/long_video_7197_guidance.gif) |
+|-----------------------------------------------|-----------------------------------------|
+| {% include figure.liquid loading="eager" path="assets/img/video_diffusion/long_video_7197_injection_800.gif" alt="Injection (800 steps)" caption="Higher-step injection for improved quality" class="img-fluid" %} | {% include figure.liquid loading="eager" path="assets/img/video_diffusion/long_video_7197_guidance.gif" alt="Guidance" caption="Standard classifier-free guidance effect" class="img-fluid" %} |
 
 
 # Self reflection
