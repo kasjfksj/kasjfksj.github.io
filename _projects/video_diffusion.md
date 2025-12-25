@@ -44,7 +44,7 @@ Comparison of injection method and guidance method
 <div class="row text-center">
   <div class="col-md-6">
     {% include figure.liquid loading="eager" 
-      path="assets/img/video_diffusion/long_video_7197_injection_800.gif" 
+      path="assets/img/video_diffusion/long_video_7685_injection_800.gif" 
       alt="Injection sampling (800 steps)" 
       caption="Injection technique with 800 denoising steps" 
       class="img-fluid" 
@@ -52,7 +52,7 @@ Comparison of injection method and guidance method
   </div>
   <div class="col-md-6">
     {% include figure.liquid loading="eager" 
-      path="assets/img/video_diffusion/long_video_7197_guidance.gif" 
+      path="assets/img/video_diffusion/long_video_7685_guidance.gif" 
       alt="Standard guidance" 
       caption="Standard classifier-free guidance" 
       class="img-fluid" 
