@@ -39,7 +39,7 @@ Ultimately, direct feature injection avoided these issues by directly perturbing
 
 # Achievements
 
-Comparison of injection method and guidance method
+Comparison of injection method and guidance method (10 frames prediction, 5 frames for temporal alignment)
 
 <div class="row text-center">
   <div class="col-md-6">
