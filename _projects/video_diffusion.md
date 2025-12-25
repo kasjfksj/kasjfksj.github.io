@@ -41,7 +41,25 @@ Ultimately, direct feature injection avoided these issues by directly perturbing
 
 Comparison of injection method and guidance method
 
-{% include figure.liquid loading="eager" path="assets/img/video_diffusion/long_video_7197_injection_800.gif" alt="Injection sampling (800 steps)" caption="Injection technique with 800 denoising steps" class="img-fluid" %}
+<div class="row text-center">
+  <div class="col-md-6">
+    {% include figure.liquid loading="eager" 
+      path="assets/img/video_diffusion/long_video_7197_injection_800.gif" 
+      alt="Injection sampling (800 steps)" 
+      caption="Injection technique with 800 denoising steps" 
+      class="img-fluid" 
+      style="max-width: 100%;" %}
+  </div>
+  <div class="col-md-6">
+    {% include figure.liquid loading="eager" 
+      path="assets/img/video_diffusion/long_video_7197_guidance.gif" 
+      alt="Standard guidance" 
+      caption="Standard classifier-free guidance" 
+      class="img-fluid" 
+      style="max-width: 100%;" %}
+  </div>
+</div>
+
 
 # Self reflection
 
