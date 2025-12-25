@@ -41,10 +41,7 @@ Ultimately, direct feature injection avoided these issues by directly perturbing
 
 Comparison of injection method and guidance method
 
-| Injection (800 steps)                          | Guidance                                |
-|-----------------------------------------------|-----------------------------------------|
-| {% include figure.liquid loading="eager" path="assets/img/video_diffusion/long_video_7197_injection_800.gif" alt="Injection (800 steps)" caption="Higher-step injection for improved quality" class="img-fluid" %} | {% include figure.liquid loading="eager" path="assets/img/video_diffusion/long_video_7197_guidance.gif" alt="Guidance" caption="Standard classifier-free guidance effect" class="img-fluid" %} |
-
+{% include figure.liquid loading="eager" path="assets/img/video_diffusion/long_video_7197_injection_800.gif" alt="Injection sampling (800 steps)" caption="Injection technique with 800 denoising steps" class="img-fluid" %}
 
 # Self reflection
 
