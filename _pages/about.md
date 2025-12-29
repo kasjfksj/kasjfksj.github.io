@@ -14,7 +14,7 @@ profile:
     <p>CV, Transcript</p>
 
 ---
-I'm a second-year undergraduate student double-majoring in Computer Science and Mathematics at the University of California, Irvine (UCI).
+I'm an undergraduate student double-majoring in Computer Science and Mathematics at the University of California, Irvine (UCI).
 
 My academic journey at UCI has been shaped by a strong foundation in both theoretical mathematics and practical computing. With a current GPA of 3.965/4.0, I have earned Departmental Honors in Computer Science and am pursuing Honors in Mathematics. My coursework spans advanced topics like stochastic processes, machine learning, and computer vision. 
 
