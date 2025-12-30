@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Diffusion series - DDPM model
-date: 2025-11-20 16:15:09
+date: 2025-08-19 15:53:28
 description: 
 tags: formatting images
 categories: model architecture
@@ -47,6 +47,8 @@ $$
 \mathbb{E}_{x \sim p_{\text{data}}(x)} \!\bigl[\log p_\theta(x)\bigr]
 
 $$
+
+## VAE
 
 However, learning such $$p_{\theta}(x)$$ is not so easy since $$x$$ typically lies in a very high-dimensional space — for example, a 256×256 color image has dimension 196,608. Modeling the distribution on such high dimension typically causes greater computation and curse of dimension (volume grows exponentially with dimension, requiring exponential number of data to accurately estimate the true distribution of the data).
 
@@ -117,4 +119,6 @@ The first term pushes the decoder to reconstruct $$x$$ well from encoder samples
 The second term forces the encoder to stay close to the standard Gaussian prior. 
 
 In practice we take one sample $$z \sim q_\phi(z \mid x) $$ (reparameterised) for the expectation and compute the KL analytically. (For more details check online description of VAE architecture and the loss)
+
+## DDPM
 
