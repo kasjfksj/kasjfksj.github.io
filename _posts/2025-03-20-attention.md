@@ -1,10 +1,10 @@
 ---
 layout: post
 title: Understanding Attention and Multi-Head Attention - From Basics to RoPE Optimization
-date: 2025-03-20 16:15:09
+date: 2025-03-20 18:56:17
 description: 
 tags: formatting images
-categories: model architecture
+categories: AI
 tabs: true
 related_posts: false
 toc:  

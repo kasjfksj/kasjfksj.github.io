@@ -4,7 +4,7 @@ title: UIUC Summer Research From Accidental Discord Find to Lab Assistant
 date: 2025-06-22 13:43:40
 description: 
 tags: formatting images
-categories: experience
+categories: CS
 tabs: true
 related_posts: false
 toc:  

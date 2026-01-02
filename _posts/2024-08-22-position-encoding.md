@@ -1,9 +1,9 @@
 ---
 layout: post
 title: History of Position Encoding
-date: 2024-08-24 16:15:09
+date: 2024-08-24 19:09:23
 description: 
-categories: encoding method
+categories: AI
 giscus_comments: true
 tabs: true
 related_posts: false

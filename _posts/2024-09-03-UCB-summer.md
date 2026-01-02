@@ -4,7 +4,7 @@ title: Summer class experience
 date: 2024-08-09 16:15:09
 description: 
 tags: experience
-categories: classes
+categories: life
 tabs: true
 related_posts: false
 toc: 

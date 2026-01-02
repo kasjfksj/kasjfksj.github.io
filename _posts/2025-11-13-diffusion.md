@@ -4,7 +4,7 @@ title: Diffusion series - DDPM model
 date: 2025-08-19 15:53:28
 description: 
 tags: formatting images
-categories: model architecture
+categories: AI
 tabs: true
 related_posts: false
 toc: 
