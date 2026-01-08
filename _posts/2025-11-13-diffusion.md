@@ -132,7 +132,7 @@ The answer is yes. Instead of trying to jump from simple Gaussian noise to compl
 
 The concept is intuitive, but the math that makes it work efficiently is clever and complicated.
 
-### 1. Forward Process: Gradually Adding Noise
+### Forward Process: Gradually Adding Noise
 We start with a clean image $$\mathbf{x}_0$$. At each timestep $$t = 1$$ to $$T$$ (usually $$T \approx 1000$$), we add a small amount of Gaussian noise:
 
 $$
@@ -149,7 +149,7 @@ $$
 
 After many steps, $$\mathbf{x}_T \approx \mathcal{N}(\mathbf{0}, \mathbf{I})$$—pure noise.
 
-### 2. Reverse Process: Learning to Remove Noise
+### Reverse Process: Learning to Remove Noise
 
 To generate images, we start from $$\mathbf{x}_T \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$$ and go backward. Instead of predicting the clean image directly, the neural network $$\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)$$ predicts the noise that was added.
 
@@ -163,7 +163,7 @@ $$
 
 Repeat $$T$$ times to get a clean $$\mathbf{x}_0$$.
 
-### 3. Training Objective: Simple Noise Prediction
+### Training Objective: Simple Noise Prediction
 
 Training is surprisingly easy:
 - Pick a random $$\mathbf{x}_0$$, random $$t$$, and random $$\boldsymbol{\epsilon}$$
