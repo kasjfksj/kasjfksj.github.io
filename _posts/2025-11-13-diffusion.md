@@ -152,7 +152,7 @@ $$
 Basically, we define the forward process to be:
 $$p(\mathbf{x}_t|\mathbf{x}_{t-1}) \sim \mathcal{N}(\sqrt{\alpha_t} \, \mathbf{x}_{t-1}, 1-\alpha_t)$$
 
-Before retrieving backward process $$p(\mathbf{x}_{t-1}|\mathbf{x}_t)$$, we need to make a mathematical transformation:
+Before retrieving backward process $$p(\mathbf{x}_{t-1} | \mathbf{x}_t)$$, we need to make a mathematical transformation:
 
 $$
 \begin{aligned}
@@ -173,13 +173,13 @@ $$\mathbf{x}_t = \sqrt{\alpha_t \, \alpha_{t-1}\,...\, \alpha_1} \, \mathbf{x}_0
 
 Let $$\bar{\alpha_t} = \alpha_t \, \alpha_{t-1}\,...\, \alpha_1$$, we can simplify the above fomula to be $$\mathbf{x}_t = \sqrt{\bar{\alpha_t}} \, \mathbf{x}_0 + \sqrt{1-\bar{\alpha_t}}\, \epsilon$$
 
-The forward process becomes $$p(\mathbf{x}_t|\mathbf{x}_0) \sim \mathcal{N}(\sqrt{\bar{\alpha_t}} \, \mathbf{x}_0, 1-\bar{\alpha_t})$$
+The forward process becomes $$p(\mathbf{x}_t | \mathbf{x}_0) \sim \mathcal{N}(\sqrt{\bar{\alpha_t}} \, \mathbf{x}_0, 1-\bar{\alpha_t})$$
 
 ### Backward Process
 
-In order to get reverse process $$p(\mathbf{x}_{t-1}|\mathbf{x}_t)$$, we can try to apply bayesian rule: 
+In order to get reverse process $$p(\mathbf{x}_{t-1} | \mathbf{x}_t)$$, we can try to apply bayesian rule: 
 
-$$p(\mathbf{x}_{t-1}|\mathbf{x}_t) = \frac{p(\mathbf{x}_t|\mathbf{x}_{t-1}) \, p(\mathbf{x}_{t-1})}{p(\mathbf{x}_t)}$$
+$$p(\mathbf{x}_{t-1}|\mathbf{x}_t) = \frac{p(\mathbf{x}_t | \mathbf{x}_{t-1}) \, p(\mathbf{x}_{t-1})}{p(\mathbf{x}_t)}$$
 
 However, the problem is that $$p(\mathbf{x}_t)$$ and $$p(\mathbf{x}_{t-1})$$ have no explicit formula, so the alternative way is to include the source image $$\mathbf{x}_0$$, which rewrites the formula as the following:
 
