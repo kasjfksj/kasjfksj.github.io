@@ -159,7 +159,16 @@ $$
 
 We can treat $$\sqrt{\alpha_t} \,\sqrt{1-\alpha_{t-1}} \, \boldsymbol{\epsilon_{t-1}} $$ and $$\sqrt{1-\alpha_t} \, \boldsymbol{\epsilon_t}$$ as representation of Gaussian distributions:
 
-$$\mathbf X_1 \sim \sqrt{\alpha_t} \,\sqrt{1-\alpha_{t-1}} \, \boldsymbol{\epsilon_{t-1}} = \mathcal{N}(0, \, \alpha_t \, (1-\alpha_t)) \\ \\  \mathbf X_2 \sim \sqrt{1-\alpha_t} \, \boldsymbol{\epsilon_t} = \mathcal{N}(0, \,(1-\alpha_t))$$
+$$
+\begin{aligned}
+\mathbf{X}_1 
+&\sim \sqrt{\alpha_t}\,\sqrt{1-\alpha_{t-1}}\,\boldsymbol{\epsilon}_{t-1}
+= \mathcal{N}\!\left(0,\, \alpha_t(1-\alpha_t)\right) \\
+\mathbf{X}_2 
+&\sim \sqrt{1-\alpha_t}\,\boldsymbol{\epsilon}_t
+= \mathcal{N}\!\left(0,\, (1-\alpha_t)\right)
+\end{aligned}
+$$
 
 Since the noise are independently added, $$\mathbf X_1 + \mathbf X_2 \sim \mathcal{N}(0, \, 1-\alpha_t \, \alpha_{t-1})$$, so the formula becomes:
 $$\mathbf{x}_t = \sqrt{\alpha_t \, \alpha_{t-1}} \, \mathbf{x}_{t-2} + \sqrt{1-\alpha_t \, \alpha_{t-1}} \, \epsilon $$
