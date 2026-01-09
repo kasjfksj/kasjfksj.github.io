@@ -36,7 +36,7 @@ And the objective should be     $$\underset{\theta}{argmin} \,\mathcal{F}(p_{dat
 Of course, the traditional way of measuring distance of 2 distributions is KL divergence, which is given as follow:
 
 $$  
-D_{\text{KL}}\!\bigl(p_{\text{data}} \,\|\, p_\theta\bigr)
+D_{\text{KL}}\!\bigl(p_{\text{data}} \,\ \mid \, p_\theta\bigr)
 = \mathbb{E}_{x \sim p_{\text{data}}(x)} \!\Bigl[\log p_{\text{data}}(x) - \log p_\theta(x)\Bigr]
   $$
 
@@ -66,41 +66,38 @@ This would work mathematically. But in reality, it performs very bad, because th
 Occasionally, by pure chance, you draw a $$z_s$$ that is close to the region where the decoder puts mass on $$x$$; then $$p_\theta(x \mid z_s)$$ is huge. This is why training model via Monte Carlo estimate from purely Gaussian distribution has insane variance and fails completely.
 
 But during training we are not blind — we have the actual data point x as prior. So instead of randomly sample from the prior, we can directly sample $$z$$ based on original image $$x$$. This can be modeled as conditional distribution $$q_{\phi}(z\mid x)$$ which is essentially mapping image distribution to the latent distribution. Such conditional distribution is also parameterized by an encoder network which produces the mean and the variance:
-$$q_\phi(z \mid x) \;=\; \mathcal{N}\!\left(z \;\middle|\; \mu_\phi(x),\; \operatorname{diag}\!\big(\sigma_\phi^2(x)\big)\right)$$
+$$
+q_\phi(z \mid x) = \mathcal{N}\bigl(z \;\big|\; \mu_\phi(x),\,\operatorname{diag}(\sigma_\phi^2(x))\bigr)
+$$
 
 With this in mind, we can now rewrite $$\log p_{\theta}(x)$$ as the following
 
 
 
-$$\log p_\theta(x) = \int q_\phi(z | x) \log p_\theta(x) \, dz$$
-
-
-$$= \int q_\phi(z | x) \log \frac{p_\theta(x, z)}{p_\theta(z | x)} \, dz$$
-
-$$= \int q_\phi(z | x) \log \frac{p_\theta(x, z)}{q_\phi(z | x)} \, dz + \int q_\phi(z | x) \log \frac{q_\phi(z | x)}{p_\theta(z | x)} \, dz$$
-
-
-$$= \int q_\phi(z | x) \log \frac{p_\theta(x, z)}{q_\phi(z | x)} \, dz + D_{\text{KL}}(q_\phi(z | x) \| p_\theta(z | x))$$
-
-
-$$\geq \int q_\phi(z | x) \log \frac{p_\theta(x, z)}{q_\phi(z | x)} \, dz \quad \text{(since KL} \geq 0\text{)}$$
+$$
+\begin{aligned}
+\log p_\theta(x) &= \int q_\phi(z  \mid  x) \log p_\theta(x) \, dz \\ &= \int q_\phi(z  \mid  x) \log \frac{p_\theta(x, z)}{p_\theta(z  \mid  x)} \, dz \\ &= \int q_\phi(z  \mid  x) \log \frac{p_\theta(x, z)}{q_\phi(z  \mid  x)} \, dz + \int q_\phi(z  \mid  x) \log \frac{q_\phi(z  \mid  x)}{p_\theta(z  \mid  x)} \, dz \\ &= \int q_\phi(z  \mid  x) \log \frac{p_\theta(x, z)}{q_\phi(z  \mid  x)} \, dz + D_{\text{KL}}(q_\phi(z  \mid  x) \ \mid  p_\theta(z  \mid  x))
+\\ &
+\geq \int q_\phi(z  \mid  x) \log \frac{p_\theta(x, z)}{q_\phi(z  \mid  x)} \, dz \quad \text{(since KL} \geq 0\text{)}
+\end{aligned}
+$$
 
 Now rewite this integral form:
 
 $$
-\int q_\phi(z | x) \log \frac{p_{\theta}(x | z) p(z)}{q_\phi(z | x)} dz = \int q_\phi(z | x) \log p_{\theta}(x | z) dz + \int q_\phi(z | x) \log \frac{p_{\theta}(z)}{q_\phi(z | x)} dz
+\int q_\phi(z  \mid  x) \log \frac{p_{\theta}(x  \mid  z) p(z)}{q_\phi(z  \mid  x)} dz = \int q_\phi(z  \mid  x) \log p_{\theta}(x  \mid  z) dz + \int q_\phi(z  \mid  x) \log \frac{p_{\theta}(z)}{q_\phi(z  \mid  x)} dz
 $$
 
 $$
-= \mathbb{E}_{q_\phi(z|x)} \left[ \log p_\theta(x | z) \right]
- - D_{\text{KL}}(q_\phi(z | x) \| p_{\theta}(z))
+= \mathbb{E}_{q_\phi(z \mid x)} \left[ \log p_\theta(x  \mid  z) \right]
+ - D_{\text{KL}}(q_\phi(z  \mid  x) \ \mid  p_{\theta}(z))
 $$
 
 
 summing all up:
 
-$$\log p_{\theta}(x) \ge \mathbb{E}_{q_\phi(z|x)} \left[ \log p_\theta(x | z) \right]
- - D_{\text{KL}}(q_\phi(z | x) \| p_{\theta}(z))$$
+$$\log p_{\theta}(x) \ge \mathbb{E}_{q_\phi(z \mid x)} \left[ \log p_\theta(x  \mid  z) \right]
+ - D_{\text{KL}}(q_\phi(z  \mid  x) \ \mid  p_{\theta}(z))$$
 
 Remember that our objective is to maximizing 
 
@@ -111,7 +108,7 @@ $$
 So the training objective wil become minimizing:
 
 $$
--\mathbb{E}_{q_\phi(z|x)} \left[ \log p_\theta(x | z) \right] + D_{\text{KL}}(q_\phi(z|x) \| p(z)) \quad x \sim p_{data}(x)
+-\mathbb{E}_{q_\phi(z \mid x)} \left[ \log p_\theta(x  \mid  z) \right] + D_{\text{KL}}(q_\phi(z \mid x) \ \mid  p(z)) \quad x \sim p_{data}(x)
 $$
 
 The first term pushes the decoder to reconstruct $$x$$ well from encoder samples.
@@ -150,9 +147,9 @@ $$
 $$
 
 Basically, we define the forward process to be:
-$$p(\mathbf{x}_t|\mathbf{x}_{t-1}) \sim \mathcal{N}(\sqrt{\alpha_t} \, \mathbf{x}_{t-1}, 1-\alpha_t)$$
+$$p(\mathbf{x}_t \mid \mathbf{x}_{t-1}) \sim \mathcal{N}(\sqrt{\alpha_t} \, \mathbf{x}_{t-1}, 1-\alpha_t)$$
 
-Before retrieving backward process $$p(\mathbf{x}_{t-1} | \mathbf{x}_t)$$, we need to make a mathematical transformation:
+Before retrieving backward process $$p(\mathbf{x}_{t-1}  \mid  \mathbf{x}_t)$$, we need to make a mathematical transformation:
 
 $$
 \begin{aligned}
@@ -173,14 +170,14 @@ $$\mathbf{x}_t = \sqrt{\alpha_t \, \alpha_{t-1}\,...\, \alpha_1} \, \mathbf{x}_0
 
 Let $$\bar{\alpha_t} = \alpha_t \, \alpha_{t-1}\,...\, \alpha_1$$, we can simplify the above fomula to be $$\mathbf{x}_t = \sqrt{\bar{\alpha_t}} \, \mathbf{x}_0 + \sqrt{1-\bar{\alpha_t}}\, \epsilon$$
 
-The forward process becomes $$p(\mathbf{x}_t | \mathbf{x}_0) \sim \mathcal{N}(\sqrt{\bar{\alpha_t}} \, \mathbf{x}_0, 1-\bar{\alpha_t})$$
+The forward process becomes $$p(\mathbf{x}_t  \mid  \mathbf{x}_0) \sim \mathcal{N}(\sqrt{\bar{\alpha_t}} \, \mathbf{x}_0, 1-\bar{\alpha_t})$$
 
 ### Backward Process
 
-In order to get reverse process $$p(\mathbf{x}_{t-1} | \mathbf{x}_t)$$, we can try to apply bayesian rule: 
+In order to get reverse process $$p(\mathbf{x}_{t-1}  \mid  \mathbf{x}_t)$$, we can try to apply bayesian rule: 
 
-$$p(\mathbf{x}_{t-1}|\mathbf{x}_t) = \frac{p(\mathbf{x}_t | \mathbf{x}_{t-1}) \, p(\mathbf{x}_{t-1})}{p(\mathbf{x}_t)}$$
+$$p(\mathbf{x}_{t-1} \mid \mathbf{x}_t) = \frac{p(\mathbf{x}_t  \mid  \mathbf{x}_{t-1}) \, p(\mathbf{x}_{t-1})}{p(\mathbf{x}_t)}$$
 
 However, the problem is that $$p(\mathbf{x}_t)$$ and $$p(\mathbf{x}_{t-1})$$ have no explicit formula, so the alternative way is to include the source image $$\mathbf{x}_0$$, which rewrites the formula as the following:
 
-$$p(\mathbf{x}_{t-1}|\mathbf{x}_t \, , \mathbf{x}_0) = \frac{p(\mathbf{x}_t|\mathbf{x}_{t-1} \, , \mathbf{x}_0) \, p(\mathbf{x}_{t-1} \, | \mathbf{x}_0)}{p(\mathbf{x}_t \, | \mathbf{x}_0)}$$
+$$p(\mathbf{x}_{t-1} \mid \mathbf{x}_t \, , \mathbf{x}_0) = \frac{p(\mathbf{x}_t \mid \mathbf{x}_{t-1} \, , \mathbf{x}_0) \, p(\mathbf{x}_{t-1} \,  \mid  \mathbf{x}_0)}{p(\mathbf{x}_t \,  \mid  \mathbf{x}_0)}$$
