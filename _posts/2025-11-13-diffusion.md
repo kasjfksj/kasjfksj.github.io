@@ -130,52 +130,57 @@ So, can we model complex data distributions more accurately?
 
 The answer is yes. Instead of trying to jump from simple Gaussian noise to complex data in one huge step (like VAEs do with decoding), we build a smooth probabilistic trajectory connecting the data distribution to a simple Gaussian noise. Each point on this trajectory is a slightly noisier version of the data. By breaking the entire path into many small steps, the change between consecutive points becomes tiny and easy to model. The neural network only needs to learn these small perturbations—predicting and removing a little noise at each step—which is a much simpler task than reconstructing the full image all at once. 
 
+In practice, we can define a forward process that iteratively adds predetermined Gaussian noise to an image and then try to learn a backward process to convert Gaussian noise to image.
+
 The concept is intuitive, but the math that makes it work efficiently is clever and complicated.
 
 ### Forward Process: Gradually Adding Noise
-We start with a clean image $$\mathbf{x}_0$$. At each timestep $$t = 1$$ to $$T$$ (usually $$T \approx 1000$$), we add a small amount of Gaussian noise:
+We start with a clean image $$\mathbf{x}_0$$. At each timestep $$t = 1$$ to $$T$$ (usually $$T \approx 1000$$), we add a small independent Gaussian noise:
 
 $$
-\mathbf{x}_t = \sqrt{1 - \beta_t} \, \mathbf{x}_{t-1} + \sqrt{\beta_t} \, \boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})
+\mathbf{x}_t = \sqrt{1 - \beta_t} \, \mathbf{x}_{t-1} + \sqrt{\beta_t} \, \boldsymbol{\epsilon_t}, \quad \boldsymbol{\epsilon_t} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})
 $$
 
-Here $$\beta_t$$ is a small variance schedule (gets slightly larger as $$t$$ increases).
+Here $$\beta_t$$ is a small variance schedule ($$\beta_t \to 1$$ as $$t$$ increases).
 
-A crucial trick: we can directly sample $$\mathbf{x}_t$$ for any $$t$$ without iterating through all previous steps. Define $$\bar{\alpha}_t = \prod_{s=1}^t (1 - \beta_s)$$. Then:
-
-$$
-\mathbf{x}_t = \sqrt{\bar{\alpha}_t} \, \mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_t} \, \boldsymbol{\epsilon}
-$$
-
-After many steps, $$\mathbf{x}_T \approx \mathcal{N}(\mathbf{0}, \mathbf{I})$$—pure noise.
-
-### Reverse Process: Learning to Remove Noise
-
-To generate images, we start from $$\mathbf{x}_T \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$$ and go backward. Instead of predicting the clean image directly, the neural network $$\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)$$ predicts the noise that was added.
-
-The reverse step is:
+To make future mathematical deduction easier, let $$\alpha_t = 1 - \beta_t$$, the formula becomes: 
 
 $$
-\mathbf{x}_{t-1} = \frac{1}{\sqrt{1 - \beta_t}} \left( \mathbf{x}_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \right) + \sigma_t \, \mathbf{z}, \quad \mathbf{z} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})
+\mathbf{x}_t = \sqrt{\alpha_t} \, \mathbf{x}_{t-1} + \sqrt{1-\alpha_t} \, \boldsymbol{\epsilon_t}
 $$
 
-($$\sigma_t$$ is usually $$\sqrt{\beta_t}$$ or a similar small term.)
+Basically, we define the forward process to be:
+$$p(\mathbf{x}_t|\mathbf{x}_{t-1}) \sim \mathcal{N}(\sqrt{\alpha_t} \, \mathbf{x}_{t-1}, 1-\alpha_t)$$
 
-Repeat $$T$$ times to get a clean $$\mathbf{x}_0$$.
-
-### Training Objective: Simple Noise Prediction
-
-Training is surprisingly easy:
-- Pick a random $$\mathbf{x}_0$$, random $$t$$, and random $$\boldsymbol{\epsilon}$$
-- Compute $$\mathbf{x}_t = \sqrt{\bar{\alpha}_t} \, \mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_t} \, \boldsymbol{\epsilon}$$
-- Predict the noise with the network and minimize:
+Before retrieving backward process $$p(\mathbf{x}_{t-1}|\mathbf{x}_t)$$, we need to make a mathematical transformation:
 
 $$
-L = \mathbb{E} \left[ \|\boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)\|^2 \right]
+\begin{aligned}
+\mathbf{x}_t &= \sqrt{\alpha_t} \, \mathbf{x}_{t-1} + \sqrt{1-\alpha_t} \, \boldsymbol{\epsilon_t} \\ &= \sqrt{\alpha_t} \, (\sqrt{\alpha_{t-1}} \, \mathbf{x}_{t-2} + \sqrt{1-\alpha_{t-1}} \, \boldsymbol{\epsilon_{t-1}}) + \sqrt{1-\alpha_t} \, \boldsymbol{\epsilon_t} \\ &= \sqrt{\alpha_t} \, \sqrt{\alpha_{t-1}} \, \mathbf{x}_{t-2} + \sqrt{\alpha_t} \,\sqrt{1-\alpha_{t-1}} \, \boldsymbol{\epsilon_{t-1}}+\sqrt{1-\alpha_t} \, \boldsymbol{\epsilon_t} 
+\end{aligned}
 $$
 
-Just mean squared error on the predicted noise!
+We can treat $$\sqrt{\alpha_t} \,\sqrt{1-\alpha_{t-1}} \, \boldsymbol{\epsilon_{t-1}} $$ and $$\sqrt{1-\alpha_t} \, \boldsymbol{\epsilon_t}$$ as representation of Gaussian distributions:
 
-This simple loss works so well because each step is small, and predicting noise turns out to be an easier and more stable target than predicting the full image.
+$$\mathbf X_1 \sim \sqrt{\alpha_t} \,\sqrt{1-\alpha_{t-1}} \, \boldsymbol{\epsilon_{t-1}} = \mathcal{N}(0, \, \alpha_t \, (1-\alpha_t)) \\ \\  \mathbf X_2 \sim \sqrt{1-\alpha_t} \, \boldsymbol{\epsilon_t} = \mathcal{N}(0, \,(1-\alpha_t))$$
 
-That's the essence of DDPM—turning a hard generation problem into thousands of easy denoising problems. In later posts, we can explore faster sampling methods and modern improvements!
+Since the noise are independently added, $$\mathbf X_1 + \mathbf X_2 \sim \mathcal{N}(0, \, 1-\alpha_t \, \alpha_{t-1})$$, so the formula becomes:
+$$\mathbf{x}_t = \sqrt{\alpha_t \, \alpha_{t-1}} \, \mathbf{x}_{t-2} + \sqrt{1-\alpha_t \, \alpha_{t-1}} \, \epsilon $$
+
+Applying this procedure recursively, we'll get:
+
+$$\mathbf{x}_t = \sqrt{\alpha_t \, \alpha_{t-1}\,...\, \alpha_1} \, \mathbf{x}_0 + \sqrt{1-\alpha_t \, \alpha_{t-1} \, ... \, \alpha_1} \, \epsilon $$
+
+Let $$\bar{\alpha_t} = \alpha_t \, \alpha_{t-1}\,...\, \alpha_1$$, we can simplify the above fomula to be $$\mathbf{x}_t = \sqrt{\bar{\alpha_t}} \, \mathbf{x}_0 + \sqrt{1-\bar{\alpha_t}}\, \epsilon$$
+
+The forward process becomes $$p(\mathbf{x}_t|\mathbf{x}_0) \sim \mathcal{N}(\sqrt{\bar{\alpha_t}} \, \mathbf{x}_0, 1-\bar{\alpha_t})$$
+
+### Backward Process
+
+In order to get reverse process $$p(\mathbf{x}_{t-1}|\mathbf{x}_t)$$, we can try to apply bayesian rule: 
+
+$$p(\mathbf{x}_{t-1}|\mathbf{x}_t) = \frac{p(\mathbf{x}_t|\mathbf{x}_{t-1}) \, p(\mathbf{x}_{t-1})}{p(\mathbf{x}_t)}$$
+
+However, the problem is that $$p(\mathbf{x}_t)$$ and $$p(\mathbf{x}_{t-1})$$ have no explicit formula, so the alternative way is to include the source image $$\mathbf{x}_0$$, which rewrites the formula as the following:
+
+$$p(\mathbf{x}_{t-1}|\mathbf{x}_t \, , \mathbf{x}_0) = \frac{p(\mathbf{x}_t|\mathbf{x}_{t-1} \, , \mathbf{x}_0) \, p(\mathbf{x}_{t-1} \, | \mathbf{x}_0)}{p(\mathbf{x}_t \, | \mathbf{x}_0)}$$
