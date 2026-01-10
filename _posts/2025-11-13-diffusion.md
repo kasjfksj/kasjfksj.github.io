@@ -7,6 +7,7 @@ tags: formatting images
 categories: AI
 tabs: true
 related_posts: false
+giscus_comments: true
 toc: 
   sidebar: left
 ---
