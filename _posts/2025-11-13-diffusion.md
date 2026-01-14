@@ -221,24 +221,49 @@ This is the backward process and we want the model to learn such distribution.
 If you remember, for an image generation task, we want to maximize the likelihood:
 
 $$  
-
-\mathbb{E}_{x \sim p_{\text{data}}(x)} \!\bigl[\log p_\theta(x)\bigr]
+\mathbb{E}_{x \sim p_{\text{data}}(x)} \!\bigl[\log q_\theta(x_0)\bigr]
 $$
+
+However, directly maximizing this is intractable. Instead, we derive a tractable lower bound using Jensen's inequality and properties of the diffusion process.
 
 $$
 \begin{align*}
-\log p_{\theta}(\boldsymbol{x}) &= \log \int p_{\theta}(\boldsymbol{x}_{0:T}) d\boldsymbol{x}_{1:T} \\
-&= \log \int \frac{p_{\theta}(\boldsymbol{x}_{0:T})p_{\theta}(\boldsymbol{x}_{1:T} \mid \boldsymbol{x}_0)}{p_{\theta}(\boldsymbol{x}_{1:T} \mid \boldsymbol{x}_0)} d\boldsymbol{x}_{1:T} \\
-&= \log \mathbb{E}_{p_{\theta}(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \frac{p_{\theta}(\boldsymbol{x}_{0:T})}{q(\boldsymbol{x}_{1:T} \mid \boldsymbol{x}_0)} \right] \\
-&\geq \mathbb{E}_{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{p(\boldsymbol{x}_{0:T})}{q(\boldsymbol{x}_{1:T} \mid \boldsymbol{x}_0)} \right] \\
-&= \mathbb{E}_{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{p_\theta(\boldsymbol{x}_T) \prod_{t=1}^{T} p_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)}{\prod_{t=1}^{T} q(\boldsymbol{x}_t \mid \boldsymbol{x}_{t-1})} \right] \\
-&= \mathbb{E}_{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{p_\theta(\boldsymbol{x}_T)p_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1) \prod_{t=2}^{T} p_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)}{q(\boldsymbol{x}_T \mid \boldsymbol{x}_{T-1}) \prod_{t=1}^{T-1} q(\boldsymbol{x}_t \mid \boldsymbol{x}_{t-1})} \right] \\
-&= \mathbb{E}_{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{p_\theta(\boldsymbol{x}_T)p_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1) \prod_{t=1}^{T-1} p_\theta(\boldsymbol{x}_t \mid \boldsymbol{x}_{t+1})}{q(\boldsymbol{x}_T \mid \boldsymbol{x}_{T-1}) \prod_{t=1}^{T-1} q(\boldsymbol{x}_t \mid \boldsymbol{x}_{t-1})} \right] \\
-&= \mathbb{E}_{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{p_\theta(\boldsymbol{x}_T)p_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1)}{q(\boldsymbol{x}_T \mid \boldsymbol{x}_{T-1})} \right] + \mathbb{E}_{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \prod_{t=1}^{T-1} \frac{p_\theta(\boldsymbol{x}_t \mid \boldsymbol{x}_{t+1})}{q(\boldsymbol{x}_t \mid \boldsymbol{x}_{t-1})} \right] \\
-&= \mathbb{E}_{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log p_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1) \right] + \mathbb{E}_{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{p_\theta(\boldsymbol{x}_T)}{q(\boldsymbol{x}_T \mid \boldsymbol{x}_{T-1})} \right] + \mathbb{E}_{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \sum_{t=1}^{T-1} \log \frac{p_\theta(\boldsymbol{x}_t \mid \boldsymbol{x}_{t+1})}{q(\boldsymbol{x}_t \mid \boldsymbol{x}_{t-1})} \right] \\
-&= \mathbb{E}_{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log p_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1) \right] + \mathbb{E}_{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{p_\theta(\boldsymbol{x}_T)}{q(\boldsymbol{x}_T \mid \boldsymbol{x}_{T-1})} \right] + \sum_{t=1}^{T-1} \mathbb{E}_{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{p_\theta(\boldsymbol{x}_t \mid \boldsymbol{x}_{t+1})}{q(\boldsymbol{x}_t \mid \boldsymbol{x}_{t-1})} \right] \\
-&= \mathbb{E}_{q(\boldsymbol{x}_1|\boldsymbol{x}_0)} \left[ \log p_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1) \right] + \mathbb{E}_{q(\boldsymbol{x}_{T-1},\boldsymbol{x}_T|\boldsymbol{x}_0)} \left[ \log \frac{p_\theta(\boldsymbol{x}_T)}{q(\boldsymbol{x}_T \mid \boldsymbol{x}_{T-1})} \right] + \sum_{t=1}^{T-1} \mathbb{E}_{q(\boldsymbol{x}_{t-1},\boldsymbol{x}_t,\boldsymbol{x}_{t+1}|\boldsymbol{x}_0)} \left[ \log \frac{p_\theta(\boldsymbol{x}_t \mid \boldsymbol{x}_{t+1})}{q(\boldsymbol{x}_t \mid \boldsymbol{x}_{t-1})} \right] \\
-&= \underbrace{\mathbb{E}_{q(\boldsymbol{x}_1|\boldsymbol{x}_0)} \left[ \log p_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1) \right]}_{\text{reconstruction term}} - \underbrace{\mathbb{E}_{q(\boldsymbol{x}_{T-1}|\boldsymbol{x}_0)} \left[ \mathcal{D}_{\text{KL}}(q(\boldsymbol{x}_T \mid \boldsymbol{x}_{T-1}) \,||\, p_\theta(\boldsymbol{x}_T)) \right]}_{\text{prior matching term}} \\
-&\quad - \sum_{t=1}^{T-1} \underbrace{\mathbb{E}_{q(\boldsymbol{x}_{t-1},\boldsymbol{x}_{t+1}|\boldsymbol{x}_0)} \left[ \mathcal{D}_{\text{KL}}(q(\boldsymbol{x}_t \mid \boldsymbol{x}_{t-1}) \,||\, p_\theta(\boldsymbol{x}_t \mid \boldsymbol{x}_{t+1})) \right]}_{\text{consistency term}}
+\log q_\theta(\boldsymbol{x_0}) &= \log \int q_\theta(\boldsymbol{x}_{0:T}) d\boldsymbol{x}_{1:T} \\
+&= \log \int \frac{q_\theta(\boldsymbol{x}_{0:T}) p(\boldsymbol{x}_{1:T} \mid \boldsymbol{x}_0)}{p(\boldsymbol{x}_{1:T} \mid \boldsymbol{x}_0)} d\boldsymbol{x}_{1:T} \\
+&= \log \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \frac{q_\theta(\boldsymbol{x}_{0:T})}{p(\boldsymbol{x}_{1:T} \mid \boldsymbol{x}_0)} \right] \\
+&\geq \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_{0:T})}{p(\boldsymbol{x}_{1:T} \mid \boldsymbol{x}_0)} \right] \\
+&= \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_T) \prod_{t=1}^T q_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)}{\prod_{t=1}^T p(\boldsymbol{x}_t \mid \boldsymbol{x}_{t-1})} \right] \\
+&= \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_T) q_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1) \prod_{t=2}^T q_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)}{p(\boldsymbol{x}_1 \mid \boldsymbol{x}_0) \prod_{t=2}^T p(\boldsymbol{x}_t \mid \boldsymbol{x}_{t-1})} \right] \\
+&= \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_T) q_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1) \prod_{t=2}^T q_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)}{p(\boldsymbol{x}_1 \mid \boldsymbol{x}_0) \prod_{t=2}^T p(\boldsymbol{x}_t \mid \boldsymbol{x}_{t-1}, \boldsymbol{x}_0)} \right] \\
+&= \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_T) q_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1)}{p(\boldsymbol{x}_1 \mid \boldsymbol{x}_0)} + \log \prod_{t=2}^T \frac{q_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)}{p(\boldsymbol{x}_t \mid \boldsymbol{x}_{t-1}, \boldsymbol{x}_0)} \right] \\
+&= \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_T) q_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1)}{p(\boldsymbol{x}_1 \mid \boldsymbol{x}_0)} + \log \prod_{t=2}^T \frac{q_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)}{\frac{p(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t, \boldsymbol{x}_0) p(\boldsymbol{x}_t|\boldsymbol{x}_0)}{p(\boldsymbol{x}_{t-1}|\boldsymbol{x}_0)}} \right] \\
+&= \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_T) q_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1)}{p(\boldsymbol{x}_1 \mid \boldsymbol{x}_0)} + \log \prod_{t=2}^T \frac{q_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)}{\frac{p(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t, \boldsymbol{x}_0) \cancel{p(\boldsymbol{x}_t|\boldsymbol{x}_0)}}{\cancel{p(\boldsymbol{x}_{t-1}|\boldsymbol{x}_0)}}} \right] \\
+&= \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_T) q_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1)}{\cancel{p(\boldsymbol{x}_1 \mid \boldsymbol{x}_0)}} + \log \frac{\cancel{p(\boldsymbol{x}_1 \mid \boldsymbol{x}_0)}}{p(\boldsymbol{x}_T \mid \boldsymbol{x}_0)} + \log \prod_{t=2}^T \frac{q_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)}{p(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t, \boldsymbol{x}_0)} \right] \\
+&= \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_T) q_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1)}{p(\boldsymbol{x}_T \mid \boldsymbol{x}_0)} + \sum_{t=2}^T \log \frac{q_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)}{p(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t, \boldsymbol{x}_0)} \right] \\
+&= \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log q_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1) \right] + \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_T)}{p(\boldsymbol{x}_T \mid \boldsymbol{x}_0)} \right] + \sum_{t=2}^T \mathbb{E}_{p(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)}{p(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t, \boldsymbol{x}_0)} \right] \\
+&= \mathbb{E}_{p(\boldsymbol{x}_1|\boldsymbol{x}_0)} \left[ \log q_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1) \right] + \mathbb{E}_{p(\boldsymbol{x}_T|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_T)}{p(\boldsymbol{x}_T \mid \boldsymbol{x}_0)} \right] + \sum_{t=2}^T \mathbb{E}_{p(\boldsymbol{x}_t, \boldsymbol{x}_{t-1}|\boldsymbol{x}_0)} \left[ \log \frac{q_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)}{p(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t, \boldsymbol{x}_0)} \right] \\
+&= \underbrace{\mathbb{E}_{p(\boldsymbol{x}_1|\boldsymbol{x}_0)} \left[ \log q_\theta(\boldsymbol{x}_0 \mid \boldsymbol{x}_1) \right]}_{\text{reconstruction term}} - \underbrace{D_{\text{KL}}(p(\boldsymbol{x}_T \mid \boldsymbol{x}_0) \| q_\theta(\boldsymbol{x}_T))}_{\text{prior matching term}} - \sum_{t=2}^T \underbrace{\mathbb{E}_{p(\boldsymbol{x}_t|\boldsymbol{x}_0)} \left[ D_{\text{KL}}(p(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t, \boldsymbol{x}_0) \| q_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t)) \right]}_{\text{denoising matching term}}
 \end{align*}
 $$
+
+(This derivation is adapted from [Calvin Luo's excellent diffusion tutorial](https://calvinyluo.com/2022/08/26/diffusion-tutorial.html) with minor notation adjustments for consistency with later sections.)
+
+In practice, we rarely optimize the full ELBO directly. Instead, most modern diffusion models focus on the following terms:
+
+* Reconstruction term → usually approximated via simple noise prediction
+* Denoising matching terms → the main training objective 
+
+The prior matching term  is typically very small when T is large, so it's often ignored during training.
+After some algebra ,the denoising objective for each timestep boils down to this very useful form
+
+$$
+\underset{\theta}{\arg\min} \, D_{\text{KL}}(p(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t, \boldsymbol{x}_0) \| q_\theta(\boldsymbol{x}_{t-1} \mid \boldsymbol{x}_t))
+= \underset{\theta}{\arg\min} \frac{1}{2\sigma_q^2(t)} \frac{\bar{\alpha}_{t-1}(1-\alpha_t)^2}{(1-\bar{\alpha}_t)^2} \left[ \left\| \hat{\boldsymbol{x}}_\theta(\boldsymbol{x}_t, t) - \boldsymbol{x}_0 \right\|_2^2 \right]
+$$
+
+In many popular implementations, DDPM, improved DDPM, DDIM, etc., people even simplify this further to directly predict the noise $\epsilon$ instead of $\hat{\boldsymbol{x}}_0$, leading to the now-standard simple loss:
+
+$$
+L_{\text{simple}} = \mathbb{E}_{t, \boldsymbol{x}_0, \epsilon} \left[ \left\| \epsilon - \epsilon_\theta(\sqrt{\bar{\alpha}_t} \boldsymbol{x}_0 + \sqrt{1 - \bar{\alpha}_t} \epsilon, t) \right\|_2^2 \right]
+$$
+
