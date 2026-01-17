@@ -12,7 +12,7 @@ toc:
   sidebar: left
 ---
 
-# Experiments with Video Diffusion Models for Long-Sequence Maze Navigation
+## Intro
 
 This post examines the application of video diffusion models to generate 300-frame first-person maze navigation sequences from the DeepMind Lab (DMLab) environment at 64×64×3 resolution. The primary challenge addressed is maintaining temporal consistency across extended sequences.
 
