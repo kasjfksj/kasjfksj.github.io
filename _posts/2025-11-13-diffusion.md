@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Diffusion series - DDPM model
+title: Diffusion Series - DDPM model
 date: 2025-08-19 15:53:28
 description: 
 tags: formatting images
@@ -266,4 +266,7 @@ In many popular implementations, DDPM, improved DDPM, DDIM, etc., people even si
 $$
 L_{\text{simple}} = \mathbb{E}_{t, \boldsymbol{x}_0, \epsilon} \left[ \left\| \epsilon - \epsilon_\theta(\sqrt{\bar{\alpha}_t} \boldsymbol{x}_0 + \sqrt{1 - \bar{\alpha}_t} \epsilon, t) \right\|_2^2 \right]
 $$
+
+
+## Score-based Diffusion
 
