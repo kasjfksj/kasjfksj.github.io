@@ -55,6 +55,59 @@ $$\text{Total bits} \approx \sum_{t=1}^{T} D_{KL}(q(x_{t-1} \mid x_t, x_0) \ \mi
 
 This sum represents the total information gap that must be communicated to reconstruct the specific image $$x_0$$ from the diffusion model. When the pretrained model $$p$$ closely matches the posterior $$q$$, the KL divergence is small and very few bits are needed. Conversely, if $$p$$ is a poor approximation of $$q$$, many more rejection sampling trials are required, increasing the communication cost substantially.
 
+# UQDM
+
+The paper "Progressive Compression with Universally Quantized Diffusion Models" addresses the computational intractability of the above approach when using Gaussian distributions. The key insight is to replace Gaussian noise channels with uniform noise channels, enabling the use of **Universal Quantization (UQ)** instead of exponentially-complex Relative Entropy Coding.
+
+### Forward Process
+
+The forward process starts with a Gaussian initialization and then uses uniform noise channels:
+
+$$q(z_T | x) = \mathcal{N}(\alpha_T x, \sigma_T^2 I)$$
+
+$$q(z_{t-1} | z_t, x) = \mathcal{U}\left(b(t)z_t + c(t)x - \frac{\Delta(t)}{2}, b(t)z_t + c(t)x + \frac{\Delta(t)}{2}\right)$$
+
+where the parameters are chosen to match the moments of Gaussian diffusion:
+
+$$b(t) = \frac{\alpha_t}{\alpha_{t-1}} \frac{\sigma_{t-1}^2}{\sigma_t^2}, \quad c(t) = \frac{\sigma_{t|t-1}^2 \alpha_{t-1}}{\sigma_t^2}, \quad \Delta(t) = \sqrt{12} \sigma_{t|t-1} \frac{\sigma_{t-1}}{\sigma_t}$$
+
+### Backward Process
+
+The reverse process uses a learned density model convolved with uniform noise:
+
+$$p(z_{t-1}|z_t) = g_\theta(z_{t-1}; z_t, t) \star \mathcal{U}(-\Delta(t)/2, \Delta(t)/2)$$
+
+where $g_\theta$ is typically chosen as a Gaussian or logistic distribution:
+
+$$g_\theta(z_{t-1}; z_t, t) = \text{Logistic}(b(t)z_t + c(t)\hat{x}_\theta(z_t; t), \sigma_Q^2(t) I)$$
+
+The model is trained by minimizing the negative ELBO:
+
+$$L(x) = \underbrace{KL(q(z_T|x) \| p(z_T))}_{L_T} + \underbrace{\mathbb{E}[-\log p(x|z_0)]}_{L_{x|z_0}} + \sum_{t=1}^{T} \underbrace{\mathbb{E}[KL(q(z_{t-1}|z_t, x) \| p(z_{t-1}|z_t))]}_{L_{t-1}}$$
+
+### Progressive Compression Algorithm
+
+**Encoding Process:**
+1. **Initialize:** Draw $z_T \sim p(z_T) = \mathcal{N}(0, I)$ using a shared random seed
+2. **For each step** $t = T, T-1, \ldots, 1$:
+   - Compute the mean: $\mu_Q = b(t)z_t + c(t)x$
+   - Draw uniform noise: $u_t \sim \mathcal{U}(-1/2, 1/2)$
+   - Quantize: $k_t = \left\lfloor \frac{\mu_Q}{\Delta(t)} + u_t \right\rceil$
+   - Entropy encode and transmit $k_t$ using the discretized $p(z_{t-1}|z_t)$
+   - Update: $z_{t-1} = \Delta(t)(k_t - u_t)$
+3. **Final step:** Entropy encode $x$ using $p(x|z_0)$
+
+**Decoding Process:**
+1. **Initialize:** Draw $z_T \sim p(z_T) = \mathcal{N}(0, I)$ using the same shared seed
+2. **For each step** $t = T, T-1, \ldots, 1$:
+   - Compute parameters of $p(z_{t-1}|z_t)$ using the denoising network $\hat{x}_\theta(z_t; t)$
+   - Draw the same uniform noise: $u_t \sim \mathcal{U}(-1/2, 1/2)$ using shared seed
+   - Entropy decode $k_t$ using $p(z_{t-1}|z_t)$
+   - Reconstruct: $z_{t-1} = \Delta(t)(k_t - u_t)$
+   - **Lossy reconstruction (progressive):** $\hat{x}_t = \hat{x}_\theta(z_{t-1}; t-1)$
+3. **Lossless reconstruction:** Entropy decode $x$ using $p(x|z_0)$
+
+
 ## Conclusion
 
 Diffusion compression works by sharing randomness between encoder and decoder. Instead of transmitting full samples, you only send indices telling the decoder which sample to pick from a shared random sequence. Combined with a compact content latent, this achieves remarkable compression at ultra-low bitrates.
